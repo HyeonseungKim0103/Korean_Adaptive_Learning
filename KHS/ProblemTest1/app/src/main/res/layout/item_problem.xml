@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/problemTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="8dp"
+        android:textStyle="bold"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/textTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radio0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1" />
+
+            <RadioButton
+                android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2" />
+
+            <RadioButton
+                android:id="@+id/radio2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3" />
+
+            <RadioButton
+                android:id="@+id/radio3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/choice1_text"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="선지 1번"
+                android:gravity="center"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/choice2_text"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="선지 2번"
+                android:gravity="center"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/choice3_text"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="선지 3번"
+                android:gravity="center"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/choice4_text"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="선지 4번"
+                android:gravity="center"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/result_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/answerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="정답"
+        android:textSize="15sp" />
+
+
+
+</LinearLayout>
