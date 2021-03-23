@@ -1,8 +1,8 @@
 package com.example.problemtest1;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 
-public class UserSet {
+public class UserSet implements Serializable{
 
     private String number; // problem_number
     private String u_answer; //user_answer

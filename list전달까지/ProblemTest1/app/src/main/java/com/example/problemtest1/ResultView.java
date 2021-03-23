@@ -2,11 +2,8 @@ package com.example.problemtest1;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.firebase.firestore.auth.User;
 
 public class ResultView extends LinearLayout {
     private TextView resultNumber;

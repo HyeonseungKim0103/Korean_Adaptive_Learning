@@ -35,6 +35,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.firestore.auth.User;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -46,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth mFirebaseAuth;
     private String mUsername;
     private String mPhotoUrl;
-
 
     //문제변수
     private RecyclerView mRecyclerView;
@@ -60,11 +64,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     //private UserSetAdapter userSetAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView recyclerView;
+    public static final String USER_LIST = "user_list";
+    private List<UserSet> userList;
 
     //private ArrayList<UserSet> userSet = null;
     private CustomAdapter cAdapter = null;
     private ListView listView = null;
 
+    public void scoring(View view) {
+        userList = new ArrayList<UserSet>();
+        userList = (ArrayList<UserSet>) cAdapter.returnList();
+        Intent intent = new Intent(MainActivity.this, ScoringActivity.class);
+        intent.putExtra(USER_LIST, (Serializable) userList);
+        startActivity(intent);
+    }
 
     public class ProblemViewHolder extends RecyclerView.ViewHolder {
         TextView number;
@@ -172,10 +185,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addResultLayout();
-            }
-
-            private void addResultLayout() {
                 listView = (ListView) findViewById(R.id.result_list_view);
 
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -188,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 //result_list_view.setAdapter(userSetAdapter);
                 listView.setAdapter(cAdapter);
             }
+
         });
 
         //로그인
@@ -339,7 +349,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 mFirebaseAuth.signOut();;
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mUsername = "";
-                startActivity(new Intent(this,SignInActivity.class));
+                startActivity(new Intent(this, SignInActivity.class));
                 finish();
                 return true;
             default:
@@ -347,4 +357,3 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 }
-

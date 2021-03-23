@@ -5,11 +5,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Objects;
+import java.util.List;
 
-public class CustomAdapter extends BaseAdapter {
+public class CustomAdapter extends BaseAdapter{
     private Context mContext = null;
     private ArrayList<UserSet> mUserSet = new ArrayList<UserSet>();
 
@@ -20,6 +20,12 @@ public class CustomAdapter extends BaseAdapter {
     // 아이템을 추가
     public void addItem(UserSet userSet){
         mUserSet.add(userSet);
+    }
+
+    public List<UserSet> returnList() {return mUserSet;}
+
+    public void setList(ArrayList<UserSet> mList) {
+        mUserSet = mList;
     }
 
     public void deleteItem(int number) {
