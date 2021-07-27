@@ -22,12 +22,19 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/problem_recycler_view"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        tools:listitem="@layout/item_problem"
+        />
 
     <CheckBox
         android:id="@+id/move_check"
@@ -42,12 +49,5 @@
         android:visibility="gone"
         android:numColumns="5"
         tools:listitem="@layout/item_move_list"/>
-
-    <Button
-        android:id="@+id/scoring_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="채점하기"
-        android:onClick="scoring" />
 
 </LinearLayout>
