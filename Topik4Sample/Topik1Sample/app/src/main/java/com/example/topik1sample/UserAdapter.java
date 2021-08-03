@@ -1,0 +1,107 @@
+package com.example.topik1sample;
+
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class UserAdapter extends BaseAdapter{
+    private int totalScore = 0;
+    private Context mContext = null;
+    private ArrayList<UserSet> mUserSet = new ArrayList<UserSet>();
+
+    public UserAdapter(Context context){
+        this.mContext = context;
+    }
+    public UserAdapter(){}
+
+    // 아이템을 추가
+    public void addItem(UserSet userSet){
+        mUserSet.add(userSet);
+    }
+
+    public List<UserSet> returnList() {
+        return mUserSet;}
+
+    public void setList(ArrayList<UserSet> mList) {
+        mUserSet = mList;
+    }
+
+    public void deleteItem(int problem_number) {
+        //Log.d("UserAdapter 에러 찾는 중 2",String.valueOf(problem_number));
+        int i =1;
+        while (i <= mUserSet.size()){
+            //Log.d("UserAdapter 에러 찾는 중 3",String.valueOf(problem_number));
+            if(mUserSet.get(mUserSet.size()-i).getProb_num() == String.valueOf(problem_number)){
+                mUserSet.remove(mUserSet.get(mUserSet.size()-i));
+            }
+            i +=1;
+        }
+    }
+
+    //아이템의 개수를 리턴
+    public int getCount(){
+        return mUserSet.size();
+    }
+
+    @Override
+    public UserSet getItem(int position) {
+        return new UserSet(getU_answer(position).toString(),
+                getP_answer(position).toString(),getNumber(position).toString());
+    }
+
+    public Object getU_answer(int position){
+        return mUserSet.get(position).getU_answer();
+    }
+    public Object getP_answer(int position){
+        return mUserSet.get(position).getP_answer();
+    }
+    public Object getNumber(int position) {
+        return mUserSet.get(position).getProb_num();
+    }
+
+    public Object getResult(int position) {
+        return mUserSet.get(position).getFinal_result();
+    }
+    public Object getScore(int position) {return mUserSet.get(position).getScore();}
+
+    public int getTotal(int position){
+        totalScore = totalScore + mUserSet.get(position).getTotal();
+        return totalScore;
+    }
+
+    public long getItemId(int position){
+        return position;
+    }
+    public View getView(int position, View convertView, ViewGroup parent){
+
+        ResultView resultView;
+
+        if(convertView == null){
+            resultView = new ResultView(mContext,mUserSet.get(position));
+        }else {
+            resultView = (ResultView)convertView;
+        }
+
+        resultView.setResultNumber(mUserSet.get(position).getProb_num());
+        resultView.setUserAnswer(mUserSet.get(position).getU_answer());
+        resultView.setRealAnswer(mUserSet.get(position).getP_answer());
+        resultView.setResult(mUserSet.get(position).getFinal_result());
+
+
+        if((position % 2) == 1) {
+            //convertView.setBackgroundColor(0x800000ff);
+            resultView.setBackgroundColor(0x800000ff);
+        }else {
+            //convertView.setBackgroundColor(0x200000ff);
+            resultView.setBackgroundColor(0x200000ff);
+        }
+
+        return resultView;
+    }
+}
