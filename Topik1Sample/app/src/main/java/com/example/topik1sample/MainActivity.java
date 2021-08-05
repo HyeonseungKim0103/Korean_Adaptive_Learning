@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void go_choice_lev(View view) {
-        Intent intent = new Intent(this, ChoiceMoActivity.class);
+        Intent intent = new Intent(this, ChoiceMoOrCatActivity.class);
         startActivity(intent);
     }
 }

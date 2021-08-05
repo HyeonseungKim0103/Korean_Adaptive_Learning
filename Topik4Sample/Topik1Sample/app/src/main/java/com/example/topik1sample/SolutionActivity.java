@@ -79,7 +79,7 @@ public class SolutionActivity extends AppCompatActivity{
         //리스트 만들면 될 듯.
 
         //intent 정보로 문제 filtering
-        getData("http://172.30.1.2:5000/topik1_solution/",prob_num); // visual code 상에서 구현
+        getData("http://172.30.1.30:5000/topik1_solution/",prob_num); // visual code 상에서 구현
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 

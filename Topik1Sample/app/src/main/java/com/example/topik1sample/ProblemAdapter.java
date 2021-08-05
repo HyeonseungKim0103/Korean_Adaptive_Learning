@@ -5,10 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProblemAdapter extends BaseAdapter{
@@ -33,6 +36,22 @@ public class ProblemAdapter extends BaseAdapter{
         return position;
     }
 
+    public boolean isChecked1(int position){
+        return mData.get(position).checked1;
+    }
+
+    public boolean isChecked2(int position){
+        return mData.get(position).checked2;
+    }
+
+    public boolean isChecked3(int position){
+        return mData.get(position).checked3;
+    }
+
+    public boolean isChecked4(int position){
+        return mData.get(position).checked4;
+    }
+
     //최적화 작업을 위해서 뷰를 한번 로드하면 재사용하고 표시할 내용만 교체하기 위한 클래스
     static class ViewHolder{
         TextView number;
@@ -45,6 +64,11 @@ public class ProblemAdapter extends BaseAdapter{
         TextView choice3Radio;
         TextView choice4Radio;
         TextView exampleText;
+        RadioButton radio1;
+        RadioButton radio2;
+        RadioButton radio3;
+        RadioButton radio4;
+
     }
 
 
@@ -69,6 +93,11 @@ public class ProblemAdapter extends BaseAdapter{
             TextView choice3Radio = convertView.findViewById(R.id.choice3Radio);
             TextView choice4Radio = convertView.findViewById(R.id.choice4Radio);
             TextView exampleText = convertView.findViewById(R.id.exampleText);
+            RadioButton radio1 = convertView.findViewById(R.id.choice1Radio);
+            RadioButton radio2 = convertView.findViewById(R.id.choice2Radio);
+            RadioButton radio3 = convertView.findViewById(R.id.choice3Radio);
+            RadioButton radio4 = convertView.findViewById(R.id.choice4Radio);
+
 
             holder.number = number;
             holder.common_question = common_question;
@@ -80,12 +109,87 @@ public class ProblemAdapter extends BaseAdapter{
             holder.choice3Radio = choice3Radio;
             holder.choice4Radio = choice4Radio;
             holder.exampleText = exampleText;
-
+            holder.radio1 = radio1;
+            holder.radio2 = radio2;
+            holder.radio3 = radio3;
+            holder.radio4 = radio4;
             convertView.setTag(holder);
+
         } else{ //재사용 할 때
             holder = (ViewHolder) convertView.getTag();
         }
         ProblemSet problemSet = mData.get(position);
+
+        //라디오 버튼
+        holder.radio1.setChecked(mData.get(position).checked1);
+        holder.radio2.setChecked(mData.get(position).checked2);
+        holder.radio3.setChecked(mData.get(position).checked3);
+        holder.radio4.setChecked(mData.get(position).checked4);
+
+        holder.radio1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean newState1 = !mData.get(position).isChecked1();
+                mData.get(position).checked1 = newState1;
+                mData.get(position).checked2 = false;
+                mData.get(position).checked3 = false;
+                mData.get(position).checked4 = false;
+
+                holder.radio2.setChecked(false);
+                holder.radio3.setChecked(false);
+                holder.radio4.setChecked(false);
+            }
+        });
+
+        holder.radio2.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean newState2 = !mData.get(position).isChecked2();
+                mData.get(position).checked2 = newState2;
+                mData.get(position).checked1 = false;
+                mData.get(position).checked3 = false;
+                mData.get(position).checked4 = false;
+
+                holder.radio1.setChecked(false);
+                holder.radio3.setChecked(false);
+                holder.radio4.setChecked(false);
+
+            }
+        });
+
+        holder.radio3.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean newState3 = !mData.get(position).isChecked3();
+                mData.get(position).checked3 = newState3;
+                mData.get(position).checked1 = false;
+                mData.get(position).checked2 = false;
+                mData.get(position).checked4 = false;
+
+                holder.radio1.setChecked(false);
+                holder.radio2.setChecked(false);
+                holder.radio4.setChecked(false);
+
+            }
+        });
+
+        holder.radio4.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean newState4 = !mData.get(position).isChecked4();
+                mData.get(position).checked4 = newState4;
+                mData.get(position).checked1 = false;
+                mData.get(position).checked2 = false;
+                mData.get(position).checked3 = false;
+
+                holder.radio1.setChecked(false);
+                holder.radio2.setChecked(false);
+                holder.radio3.setChecked(false);
+
+            }
+        });
+
+
         //데이터 설정
         holder.number.setText(problemSet.getProb_num());
         holder.common_question.setText(problemSet.getQuestion());

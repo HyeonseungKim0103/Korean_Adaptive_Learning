@@ -13,10 +13,16 @@ public class ProblemSet{
     private String question_example;
     private String text;
 
+    //라디오버튼
+    boolean checked1;
+    boolean checked2;
+    boolean checked3;
+    boolean checked4;
+
     public ProblemSet(){}
 
     public ProblemSet(String prob_num, String question, String plural_question, String question_example, String text, String choice1,
-                      String choice2, String choice3, String choice4){
+                      String choice2, String choice3, String choice4, Boolean b, Boolean b2, Boolean b3, Boolean b4){
         this.prob_num = prob_num;
         this.question = question;
         this.plural_question = plural_question;
@@ -26,6 +32,10 @@ public class ProblemSet{
         this.choice2 = choice2;
         this.choice3 = choice3;
         this.choice4 = choice4;
+        this.checked1 = b;
+        this.checked2 = b2;
+        this.checked3 = b3;
+        this.checked4 = b4;
 
     }
 
@@ -102,4 +112,19 @@ public class ProblemSet{
         this.text = text;
     }
 
+    public boolean isChecked1(){
+        return checked1;
+    }
+
+    public boolean isChecked2(){
+        return checked2;
+    }
+
+    public boolean isChecked3(){
+        return checked3;
+    }
+
+    public boolean isChecked4(){
+        return checked4;
+    }
 }

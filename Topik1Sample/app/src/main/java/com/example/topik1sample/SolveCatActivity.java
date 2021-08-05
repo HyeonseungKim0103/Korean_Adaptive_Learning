@@ -1,22 +1,18 @@
 package com.example.topik1sample;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.GridView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -26,16 +22,11 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 
-import kotlin.collections.UCollectionsKt;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -47,17 +38,10 @@ import okhttp3.Response;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class SolveMoActivity extends AppCompatActivity{
+public class SolveCatActivity extends AppCompatActivity{
+
     String myJson;
     ArrayList<ProblemSet> prob_data = new ArrayList<>();
-
-    public static final String USER_LIST = "user_list";
-    private static final String PROB_SCORE = "total_point";
-    private static final String PROB_ROUND = "prob_round";
-    private List<UserSet> userList;
-    private UserAdapter uAdapter = null;
-    String mRound;
-    private int mPoint = 0;
 
     //따로 class 만들면 좋은데, 여기서는 Main에서 다 만들어 놓음.
     public static final String TAG_RESULTS = "result";
@@ -71,10 +55,19 @@ public class SolveMoActivity extends AppCompatActivity{
     public static final String CHOICE3 = "choice3";
     public static final String CHOICE4 = "choice4";
     public static final String ANSWER = "answer";
-    public static final String SCORE = "score";
-    public static final String SOLUTION = "explanation";
 
-    public static ProblemAdapter pAdapter = null;
+    private ArrayList<Integer> prob_num_list;
+
+    //선택된 정보 가져오기
+    public static final String CHOICE_CAT = "choice_cat";
+    public static final String CHOICE_PROB_CAT = "choice_prob_cat";
+    private String selected_cat;
+    private String selected_prob_cat;
+    private String response_result;
+
+    //번호이동
+    ArrayList<String> gridItem;
+    GridAdapter gridAdapter;
 
     TextView exampleText;
     TextView problemTextView;
@@ -84,56 +77,41 @@ public class SolveMoActivity extends AppCompatActivity{
 
     ListView listview;
 
-    //선택된 정보 가져오기
-    public static final String CHOICE_ROUND = "choice_round";
-    public static final String CHOICE_PROB = "choice_prob";
-    private String selected_round;
-    private String selected_prob;
-    private String response_result;
-
-    //번호이동
-    ArrayList<String> gridItem;
-    GridAdapter gridAdapter;
-
-    private ArrayList<Integer> prob_num_list;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (android.os.Build.VERSION.SDK_INT > 9)
-        {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-
-        setContentView(R.layout.activity_solve_mo);
+        setContentView(R.layout.activity_solve_cat);
         listview = findViewById(R.id.listView);
         probList = new ArrayList<HashMap<String, String>>(); //우리껄로 만들거면 우리가 이미 만들어놓은 ProblemSet class나 UserSet class Type으로
         //리스트 만들면 될 듯.
-//        getData("http://192.168.0.5:5000/topik1_exam"); // 스벅에서
-        getData("http://172.30.1.30:5000/topik1_exam2/");
+//        getData("http://192.168.0.6:5000/topik1_exam_cat");
+//        getData("http://192.168.0.22:5000/topik1_exam_cat");
+        getData("http://172.30.1.30:5000/topik1_exam_cat");
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
         exampleText = findViewById(R.id.exampleText);
         problemTextView = findViewById(R.id.problemTextView);
 
+        //선택된 정보
         Intent intent = getIntent();
-        selected_round = intent.getStringExtra(CHOICE_ROUND);
-        selected_prob = intent.getStringExtra(CHOICE_PROB);
+        selected_cat = intent.getStringExtra(CHOICE_CAT);
+        Log.d("선택", selected_cat);
+        selected_prob_cat = intent.getStringExtra(CHOICE_PROB_CAT);
 
         //요청
         OkHttpClient okHttpClient = new OkHttpClient();
 
-        RequestBody formbody = new FormBody.Builder().add("selected_problem",selected_prob).add("selected_round",selected_round).build();
+        RequestBody formbody = new FormBody.Builder().add("selected_problem_cat",selected_prob_cat).add("selected_cat",selected_cat).build();
 
-        Request request = new Request.Builder().url("http://172.30.1.30:5000/topik1_exam2/").post(formbody).build();
+//        Request request = new Request.Builder().url("http:192.168.0.6:5000/topik1_exam_cat").post(formbody).build();
+        Request request = new Request.Builder().url("http://172.30.1.30:5000/topik1_exam_cat").post(formbody).build();
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(SolveMoActivity.this, "network error...!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SolveCatActivity.this, "network error...!", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -141,7 +119,6 @@ public class SolveMoActivity extends AppCompatActivity{
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 response_result = response.body().string();
-                //Log.d("이것인가??",response_result);
             }
         });
 
@@ -191,10 +168,12 @@ public class SolveMoActivity extends AppCompatActivity{
                 String choice2 = c.getString(CHOICE2);
                 String choice3 = c.getString(CHOICE3);
                 String choice4 = c.getString(CHOICE4);
-                String answer = c.getString(ANSWER);
-                String score = c.getString(SCORE);
-                String solution = c.getString(SOLUTION);
-                prob_num_list.add(Integer.parseInt(prob_num));
+//                prob_num_list.add(Integer.parseInt(prob_num));
+                boolean b = false;
+                boolean b2 = false;
+                boolean b3 = false;
+                boolean b4 = false;
+                prob_num_list.add(i+1);
 
                 if(question.equals("NA")){
                     question = "";
@@ -212,22 +191,28 @@ public class SolveMoActivity extends AppCompatActivity{
                     text = "";
                 }
 
-                prob_data.add(new ProblemSet(prob_num, question,plural_question ,question_example, text, choice1,
-                        choice2, choice3, choice4,answer, score, null,solution));
+
+//                prob_data.add(new ProblemSet(prob_num, question,plural_question ,question_example, text, choice1,
+//                        choice2, choice3, choice4));
+
+                prob_data.add(new ProblemSet(String.valueOf(i+1), question,plural_question ,question_example, text, choice1,
+                        choice2, choice3, choice4,b,b2,b3,b4));
+
+
             }
 
             if(!prob_num_list.isEmpty()){
-                for(int j = 0; j < Integer.parseInt(selected_prob); j++ ){
+                for(int j = 0; j < Integer.parseInt(selected_prob_cat); j++ ){
                     gridItem.add(prob_num_list.get(j).toString());
                 }
             } else{
                 Log.d("문제리스트", "비어있음");
             }
 
+
             ProblemAdapter adapter = new ProblemAdapter(prob_data);
 
             listview.setAdapter(adapter);
-            pAdapter = adapter;
         } catch(JSONException e){
             e.printStackTrace();
         }
@@ -238,9 +223,8 @@ public class SolveMoActivity extends AppCompatActivity{
 
             @Override
             protected String doInBackground(String... params) {
-                String uri = params[0]; //위에서 내가 써놨던 http://192.168.0.4/simpletopik1.php 이거 가져옴.
+                String uri = params[0]; //위에서 내가 써놨던 http://192.168.0.6/topik1_exam 이거 가져옴.
                 //getDate(String url)을 params로 받아서 링크를 가져옴.
-
                 BufferedReader bufferedReader = null;
                 try{
                     URL url = new URL(uri); //String으로 받아온 uri를 URL 타입으로 변경
@@ -270,7 +254,6 @@ public class SolveMoActivity extends AppCompatActivity{
 //                } else{
 //                    Log.d("없다", "없다...");
 //                }
-
                 myJson = response_result;
                 showList();
             }
@@ -280,18 +263,6 @@ public class SolveMoActivity extends AppCompatActivity{
     }
 
     public void scoring(View view) {
-        if (!pAdapter.isEmpty()) {
-            uAdapter = pAdapter.return_uAdapter();
-            userList = (ArrayList<UserSet>) uAdapter.returnList();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                userList.sort(Comparator.naturalOrder());
-            }
 
-            Intent intent = new Intent(this, ScoringActivity.class);
-            intent.putExtra(USER_LIST, (Serializable) userList);
-            intent.putExtra(PROB_ROUND, mRound);
-            intent.putExtra(PROB_SCORE, mPoint);
-            startActivity(intent);
-        }
     }
 }

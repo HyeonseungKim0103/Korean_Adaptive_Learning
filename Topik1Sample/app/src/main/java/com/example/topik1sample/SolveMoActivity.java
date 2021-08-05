@@ -87,7 +87,9 @@ public class SolveMoActivity extends AppCompatActivity{
         listview = findViewById(R.id.listView);
         probList = new ArrayList<HashMap<String, String>>(); //우리껄로 만들거면 우리가 이미 만들어놓은 ProblemSet class나 UserSet class Type으로
         //리스트 만들면 될 듯.
-        getData("http://192.168.0.6:5000/topik1_exam");
+//        getData("http://192.168.0.6:5000/topik1_exam_mo");
+//        getData("http://192.168.0.22:5000/topik1_exam_mo"); //plant planet에서
+        getData("http://172.30.1.30:5000/topik1_exam_mo");
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
@@ -104,7 +106,9 @@ public class SolveMoActivity extends AppCompatActivity{
 
         RequestBody formbody = new FormBody.Builder().add("selected_problem",selected_prob).add("selected_round",selected_round).build();
 
-        Request request = new Request.Builder().url("http:192.168.0.6:5000/topik1_exam").post(formbody).build();
+//        Request request = new Request.Builder().url("http:192.168.0.6:5000/topik1_exam_mo").post(formbody).build();
+//        Request request = new Request.Builder().url("http://192.168.0.22:5000/topik1_exam_mo").post(formbody).build(); //plant_planet에서
+        Request request = new Request.Builder().url("http://172.30.1.30:5000/topik1_exam_mo").post(formbody).build(); //plant_planet에
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
@@ -167,7 +171,13 @@ public class SolveMoActivity extends AppCompatActivity{
                 String choice2 = c.getString(CHOICE2);
                 String choice3 = c.getString(CHOICE3);
                 String choice4 = c.getString(CHOICE4);
-                prob_num_list.add(Integer.parseInt(prob_num));
+//                prob_num_list.add(Integer.parseInt(prob_num));
+                boolean b = false;
+                boolean b2 = false;
+                boolean b3 = false;
+                boolean b4 = false;
+                prob_num_list.add(i+1);
+
 
                 if(question.equals("NA")){
                     question = "";
@@ -186,8 +196,11 @@ public class SolveMoActivity extends AppCompatActivity{
                 }
 
 
-                prob_data.add(new ProblemSet(prob_num, question,plural_question ,question_example, text, choice1,
-                        choice2, choice3, choice4));
+//                prob_data.add(new ProblemSet(prob_num, question,plural_question ,question_example, text, choice1,
+//                        choice2, choice3, choice4));
+
+                prob_data.add(new ProblemSet(String.valueOf(i+1), question,plural_question ,question_example, text, choice1,
+                        choice2, choice3, choice4,b,b2,b3,b4));
 
             }
 
