@@ -94,9 +94,14 @@ public class UserSet implements Serializable,Comparable<UserSet>{
     public void setFinal_result(String final_result) {this.final_result = final_result;}
 
     @Override
-    public int compareTo(@NotNull UserSet userSet) {
-        return this.prob_num.compareTo(userSet.prob_num);
+    public int compareTo(UserSet other) {
+        // TODO Auto-generated method stub
+        //int target = Integer.parseInt(other.prob_num);
+        if(prob_num == other.prob_num) return 0;
+        else if(Integer.parseInt(prob_num) > Integer.parseInt(other.prob_num)) return 1;
+        else return -1;
     }
+
 
 //    public int getResId() {
 //        return resId;

@@ -41,6 +41,23 @@ public class ProblemAdapter extends BaseAdapter{
         return position;
     }
 
+    public boolean isChecked1(int position){
+        return mData.get(position).checked1;
+    }
+
+    public boolean isChecked2(int position){
+        return mData.get(position).checked2;
+    }
+
+    public boolean isChecked3(int position){
+        return mData.get(position).checked3;
+    }
+
+    public boolean isChecked4(int position){
+        return mData.get(position).checked4;
+    }
+
+
     //최적화 작업을 위해서 뷰를 한번 로드하면 재사용하고 표시할 내용만 교체하기 위한 클래스
     static class ViewHolder{
         TextView number;
@@ -48,11 +65,17 @@ public class ProblemAdapter extends BaseAdapter{
         TextView plural_question;
         TextView problemTextView;
         TextView textTextView;
-        RadioGroup radioGroup;
+
+        TextView choiceNumber1;
+        TextView choiceNumber2;
+        TextView choiceNumber3;
+        TextView choiceNumber4;
+
         RadioButton choice1Radio;
         RadioButton choice2Radio;
         RadioButton choice3Radio;
         RadioButton choice4Radio;
+
         TextView exampleText;
         TextView solutionText;
 
@@ -61,15 +84,14 @@ public class ProblemAdapter extends BaseAdapter{
         TextView score;
 
         FrameLayout frameDraw;
-
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) { //아이템 한 칸에 들어갈 레이아웃
         //MainActivity와 같은 activity에서는 setContentView해서 바로 가져오면 되지만
         //activity가 아닌 일반 class에서는 LayoutInflater로 로드한 View에서 명시적으로 findViewVyId를 사용해야함.
         ViewHolder holder;
+
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = LayoutInflater.from(parent.getContext())
@@ -81,27 +103,33 @@ public class ProblemAdapter extends BaseAdapter{
             TextView plural_question = convertView.findViewById(R.id.plural_question);
             TextView problemTextView = convertView.findViewById(R.id.problemTextView);
             TextView textTextView = convertView.findViewById(R.id.textTextView);
-            RadioGroup radioGroup = convertView.findViewById(R.id.radioGroup);
+            TextView choiceNumber1 = convertView.findViewById(R.id.choiceNumber1);
+            TextView choiceNumber2 = convertView.findViewById(R.id.choiceNumber2);
+            TextView choiceNumber3 = convertView.findViewById(R.id.choiceNumber3);
+            TextView choiceNumber4 = convertView.findViewById(R.id.choiceNumber4);
             RadioButton choice1Radio = convertView.findViewById(R.id.choice1Radio);
             RadioButton choice2Radio = convertView.findViewById(R.id.choice2Radio);
             RadioButton choice3Radio = convertView.findViewById(R.id.choice3Radio);
             RadioButton choice4Radio = convertView.findViewById(R.id.choice4Radio);
             TextView exampleText = convertView.findViewById(R.id.exampleText);
             TextView solutionText = convertView.findViewById(R.id.solutionText);
-
             TextView problemUserAnswer = convertView.findViewById(R.id.problemUserAnswer);
             TextView problemRealAnswer = convertView.findViewById(R.id.problemRealAnswer);
             TextView score = convertView.findViewById(R.id.prob_point);
 
             FrameLayout frameDraw = convertView.findViewById(R.id.frameDraw);
 
-
             holder.number = number;
             holder.common_question = common_question;
             holder.plural_question = plural_question;
             holder.problemTextView = problemTextView;
             holder.textTextView = textTextView;
-            holder.radioGroup =radioGroup;
+
+            holder.choiceNumber1 = choiceNumber1;
+            holder.choiceNumber2 = choiceNumber2;
+            holder.choiceNumber3 = choiceNumber3;
+            holder.choiceNumber4 = choiceNumber4;
+
             holder.choice1Radio = choice1Radio;
             holder.choice2Radio = choice2Radio;
             holder.choice3Radio = choice3Radio;
@@ -114,69 +142,176 @@ public class ProblemAdapter extends BaseAdapter{
             holder.problemRealAnswer = problemRealAnswer;
             holder.score = score;
 
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    switch (checkedId) {
-                        case R.id.choice1Radio:
-                            ChangeAnswer("1");
-                            break;
-                        case R.id.choice2Radio:
-                            ChangeAnswer("2");
-                            break;
-                        case R.id.choice3Radio:
-                            ChangeAnswer("3");
-                            break;
-                        case R.id.choice4Radio:
-                            ChangeAnswer("4");
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
-                    Log.d("g확인용", String.valueOf(problemNumber));
-                    uAdapter.deleteItem(problemNumber);
-                    uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), problemRealAnswer.getText().toString(),
-                            String.valueOf(point)));
-                }
-
-                private void ChangeAnswer(String answer) {
-                    problemUserAnswer.setText(answer);
-                    holder.problemUserAnswer = problemUserAnswer;
-                    int numInt = Integer.parseInt(String.valueOf(problemUserAnswer.getText()));
-                    if (String.valueOf(numInt) == String.valueOf(1)) {
-                        DeleteSetItem(numInt, Integer.parseInt(number.getText().toString()), Integer.parseInt(score.getText().toString()));
-                    } else if (String.valueOf(numInt) == String.valueOf(2)) {
-                        Log.d("안녕2222", score.getText().toString());
-                        DeleteSetItem(numInt, Integer.parseInt(number.getText().toString()), Integer.parseInt(score.getText().toString()));
-                    } else if (String.valueOf(numInt) == String.valueOf(3)) {
-                        DeleteSetItem(numInt, Integer.parseInt(number.getText().toString()), Integer.parseInt(score.getText().toString()));
-                    } else {
-                        DeleteSetItem(numInt, Integer.parseInt(number.getText().toString()), Integer.parseInt(score.getText().toString()));
-                    }
-                }
-
-            });
-
             convertView.setTag(holder);
         } else{ //재사용 할 때
             holder = (ViewHolder) convertView.getTag();
         }
         ProblemSet problemSet = mData.get(position);
+
+
+
+        holder.choice1Radio.setChecked(mData.get(position).checked1);
+        holder.choice2Radio.setChecked(mData.get(position).checked2);
+        holder.choice3Radio.setChecked(mData.get(position).checked3);
+        holder.choice4Radio.setChecked(mData.get(position).checked4);
+
+        holder.choice1Radio.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean newState1 = !mData.get(position).isChecked1();
+                mData.get(position).checked1 = newState1;
+                mData.get(position).checked2 = false;
+                mData.get(position).checked3 = false;
+                mData.get(position).checked4 = false;
+
+                holder.choice2Radio.setChecked(false);
+                holder.choice3Radio.setChecked(false);
+                holder.choice4Radio.setChecked(false);
+                ChangeAnswer("1");
+            }
+            private void ChangeAnswer(String answer) {
+                holder.problemUserAnswer.setText(answer);
+                int numInt = Integer.parseInt(String.valueOf(answer));
+                if (String.valueOf(numInt) == String.valueOf(1)) {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else if (String.valueOf(numInt) == String.valueOf(2)) {
+                    Log.d("ProblemAdapterChangeAns", holder.score.getText().toString());
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else if (String.valueOf(numInt) == String.valueOf(3)) {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                }
+            }
+            public void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
+                Log.d("g확인용", String.valueOf(problemNumber));
+                uAdapter.deleteItem(problemNumber);
+                uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),
+                        String.valueOf(point)));
+            }
+        });
+
+        holder.choice2Radio.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean newState2 = !mData.get(position).isChecked2();
+                mData.get(position).checked1 = false;
+                mData.get(position).checked2 = newState2;
+                mData.get(position).checked3 = false;
+                mData.get(position).checked4 = false;
+
+                holder.choice1Radio.setChecked(false);
+                holder.choice3Radio.setChecked(false);
+                holder.choice4Radio.setChecked(false);
+                ChangeAnswer("2");
+            }
+
+            private void ChangeAnswer(String answer) {
+                holder.problemUserAnswer.setText(answer);
+                int numInt = Integer.parseInt(String.valueOf(answer));
+                if (String.valueOf(numInt) == String.valueOf(1)) {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else if (String.valueOf(numInt) == String.valueOf(2)) {
+                    Log.d("ProblemAdapterChangeAns", holder.score.getText().toString());
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else if (String.valueOf(numInt) == String.valueOf(3)) {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                }
+            }
+            public void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
+                Log.d("g확인용", String.valueOf(problemNumber));
+                uAdapter.deleteItem(problemNumber);
+                uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),
+                        String.valueOf(point)));
+            }
+        });
+
+        holder.choice3Radio.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean newState3 = !mData.get(position).isChecked3();
+                mData.get(position).checked1 = false;
+                mData.get(position).checked2 = false;
+                mData.get(position).checked3 = newState3;
+                mData.get(position).checked4 = false;
+
+                holder.choice1Radio.setChecked(false);
+                holder.choice2Radio.setChecked(false);
+                holder.choice4Radio.setChecked(false);
+                ChangeAnswer("3");
+            }
+
+            private void ChangeAnswer(String answer) {
+                holder.problemUserAnswer.setText(answer);
+                int numInt = Integer.parseInt(String.valueOf(answer));
+                if (String.valueOf(numInt) == String.valueOf(1)) {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else if (String.valueOf(numInt) == String.valueOf(2)) {
+                    Log.d("ProblemAdapterChangeAns", holder.score.getText().toString());
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else if (String.valueOf(numInt) == String.valueOf(3)) {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                }
+            }
+            public void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
+                Log.d("g확인용", String.valueOf(problemNumber));
+                uAdapter.deleteItem(problemNumber);
+                uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),
+                        String.valueOf(point)));
+            }
+        });
+
+        holder.choice4Radio.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean newState4 = !mData.get(position).isChecked4();
+                mData.get(position).checked1 = false;
+                mData.get(position).checked2 = false;
+                mData.get(position).checked3 = false;
+                mData.get(position).checked4 = newState4;
+
+                holder.choice1Radio.setChecked(false);
+                holder.choice2Radio.setChecked(false);
+                holder.choice3Radio.setChecked(false);
+                ChangeAnswer("4");
+            }
+
+            private void ChangeAnswer(String answer) {
+                holder.problemUserAnswer.setText(answer);
+                int numInt = Integer.parseInt(String.valueOf(answer));
+                if (String.valueOf(numInt) == String.valueOf(1)) {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else if (String.valueOf(numInt) == String.valueOf(2)) {
+                    Log.d("ProblemAdapterChangeAns", holder.score.getText().toString());
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else if (String.valueOf(numInt) == String.valueOf(3)) {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                } else {
+                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                }
+            }
+            public void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
+                Log.d("g확인용", String.valueOf(problemNumber));
+                uAdapter.deleteItem(problemNumber);
+                uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),
+                        String.valueOf(point)));
+            }
+        });
+
         //데이터 설정
         holder.number.setText(problemSet.getProb_num());
         holder.common_question.setText(problemSet.getQuestion());
         if(holder.common_question.getText().equals("")){
             holder.common_question.setVisibility(View.GONE);
         }
-
         holder.plural_question.setText(problemSet.getPlural_question());
         if(!holder.plural_question.getText().equals("")){
             holder.plural_question.setVisibility(View.VISIBLE);
         }
-
         holder.problemTextView.setText(problemSet.getQuestion_example());
         if(!holder.problemTextView.getText().equals("")){
             holder.exampleText.setVisibility(View.VISIBLE);
@@ -187,8 +322,8 @@ public class ProblemAdapter extends BaseAdapter{
         if(!holder.textTextView.getText().equals("")){
             holder.textTextView.setVisibility(View.VISIBLE);
         }
-
         holder.number.setText(String.valueOf(problemSet.getProb_num()));
+
         holder.score.setText(problemSet.getScore());
         holder.choice1Radio.setText(problemSet.getChoice1());
         holder.choice2Radio.setText(problemSet.getChoice2());
@@ -203,25 +338,9 @@ public class ProblemAdapter extends BaseAdapter{
         String real_answer = problemSet.getAnswer();
 
         if (user_answer != null){
-            Log.d("유저 엔서", user_answer);
-            if(user_answer.equals("1")){
-                Log.d("유저 엔서1", user_answer);
-                holder.radioGroup.check(R.id.choice1Radio);
-            }else if(user_answer.equals("2")){
-                Log.d("유저 엔서2", user_answer);
-                holder.radioGroup.check(R.id.choice2Radio);
-            }else if(user_answer.equals("3")){
-                Log.d("유저 엔서3", user_answer);
-                holder.radioGroup.check(R.id.choice3Radio);
-            }else if(user_answer.equals("4")){
-                Log.d("유저 엔서4", user_answer);
-                holder.radioGroup.check(R.id.choice4Radio);
-            }
-
             //O, X그리기
             O_drawing O_drawing = new O_drawing(convertView.getContext());
             X_drawing X_drawing = new X_drawing(convertView.getContext());
-
             Log.d("user_answer", user_answer);
             Log.d("real_answer",real_answer);
             if(Integer.parseInt(user_answer) ==Integer.parseInt(real_answer) ){
@@ -231,9 +350,36 @@ public class ProblemAdapter extends BaseAdapter{
                 //Log.d("X","X");
                 holder.frameDraw.addView(X_drawing);
             }
+
+            if(user_answer.equals("1")){
+                holder.choice1Radio.setChecked(TRUE);
+                holder.choice2Radio.setChecked(FALSE);
+                holder.choice3Radio.setChecked(FALSE);
+                holder.choice4Radio.setChecked(FALSE);
+            }
+            else if(user_answer.equals("2")){
+                holder.choice1Radio.setChecked(FALSE);
+                holder.choice2Radio.setChecked(TRUE);
+                holder.choice3Radio.setChecked(FALSE);
+                holder.choice4Radio.setChecked(FALSE);
+            }
+            else if(user_answer.equals("3")){
+                holder.choice1Radio.setChecked(FALSE);
+                holder.choice2Radio.setChecked(FALSE);
+                holder.choice3Radio.setChecked(TRUE);
+                holder.choice4Radio.setChecked(FALSE);
+            }
+            else{
+                holder.choice1Radio.setChecked(FALSE);
+                holder.choice2Radio.setChecked(FALSE);
+                holder.choice3Radio.setChecked(FALSE);
+                holder.choice4Radio.setChecked(TRUE);
+            }
         }
+
         return convertView;
     }
+
     public UserAdapter return_uAdapter(){
         final UserAdapter uAdapter = this.uAdapter;
         return uAdapter;

@@ -17,8 +17,17 @@ public class ProblemSet {
     private String score;
     private String user_answer;
 
+    //라디오버튼
+    boolean checked1;
+    boolean checked2;
+    boolean checked3;
+    boolean checked4;
+
+    public ProblemSet(){}
+
     public ProblemSet(String prob_num, String question, String plural_question, String question_example, String text, String choice1,
-                      String choice2, String choice3, String choice4, String answer, String score, String user_answer, String explanation){
+                      String choice2, String choice3, String choice4, String answer, String score, String user_answer, String explanation,
+                      Boolean checked1, Boolean checked2, Boolean checked3, Boolean checked4){
         this.prob_num = prob_num;
         this.question = question;
         this.plural_question = plural_question;
@@ -33,7 +42,46 @@ public class ProblemSet {
         this.user_answer = user_answer;
         this.solution= explanation;
 
+        this.checked1 = checked1;
+        this.checked2 = checked2;
+        this.checked3 = checked3;
+        this.checked4 = checked4;
+
     }
+
+
+    public boolean isChecked1() {
+        return checked1;
+    }
+
+    public void setChecked1(boolean checked1) {
+        this.checked1 = checked1;
+    }
+
+    public boolean isChecked2() {
+        return checked2;
+    }
+
+    public void setChecked2(boolean checked2) {
+        this.checked2 = checked2;
+    }
+
+    public boolean isChecked3() {
+        return checked3;
+    }
+
+    public void setChecked3(boolean checked3) {
+        this.checked3 = checked3;
+    }
+
+    public boolean isChecked4() {
+        return checked4;
+    }
+
+    public void setChecked4(boolean checked4) {
+        this.checked4 = checked4;
+    }
+
 
     public String getSolution() {
         return solution;
@@ -140,4 +188,6 @@ public class ProblemSet {
     public void setAnswer(String answer) {
         this.answer = answer;
     }
+
+
 }

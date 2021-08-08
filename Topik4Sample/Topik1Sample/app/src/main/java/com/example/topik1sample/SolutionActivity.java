@@ -42,7 +42,6 @@ public class SolutionActivity extends AppCompatActivity{
     public static final String ANSWER = "answer";
     public static final String SCORE = "score";
 
-
     TextView exampleText;
     TextView problemTextView;
 
@@ -79,7 +78,7 @@ public class SolutionActivity extends AppCompatActivity{
         //리스트 만들면 될 듯.
 
         //intent 정보로 문제 filtering
-        getData("http://172.30.1.30:5000/topik1_solution/",prob_num); // visual code 상에서 구현
+        getData("http://172.30.1.6:5000/topik1_solution/",prob_num); // visual code 상에서 구현
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
@@ -108,14 +107,19 @@ public class SolutionActivity extends AppCompatActivity{
                 String solution = c.getString(SOLUTION);
                 String u_answer = user_answer;
 
+                //prob_num_list.add(Integer.parseInt(prob_num));
+
+                boolean b = false;
+                boolean b2 = false;
+                boolean b3 = false;
+                boolean b4 = false;
+
                 if(question.equals("NA")){
                     question = "";
                 }
-
                 if(plural_question.equals("NA")){
                     plural_question = "";
                 }
-
                 if(question_example.equals("NA")){
                     question_example = "";
                 }
@@ -123,12 +127,16 @@ public class SolutionActivity extends AppCompatActivity{
                     text = "";
                 }
 
+//                prob_data.add(new ProblemSet(prob_num, question,plural_question ,question_example, text, choice1,
+//                        choice2, choice3, choice4, answer, score,u_answer,solution));
+
                 prob_data.add(new ProblemSet(prob_num, question,plural_question ,question_example, text, choice1,
-                        choice2, choice3, choice4, answer, score,u_answer,solution));
+                        choice2, choice3, choice4,answer, score, u_answer,solution,b,b2,b3,b4));
             }
             ProblemAdapter adapter = new ProblemAdapter(prob_data);
 
             listview.setAdapter(adapter);
+
         } catch(JSONException e){
             e.printStackTrace();
         }
@@ -162,7 +170,6 @@ public class SolutionActivity extends AppCompatActivity{
                     while((json = bufferedReader.readLine()) != null) {
                         sb.append(json + "\n");
                     }
-
                     return sb.toString().trim(); // 받아온 json의 공백 제거.
                 } catch (Exception e){
                     return null;
@@ -174,7 +181,6 @@ public class SolutionActivity extends AppCompatActivity{
                 if(result != null){
                     myJson = result;
                     showList();
-
                 } else{
                     Log.d("없다", "없다...");
                 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".SolveCatActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="실전 모의고사"
+            android:text="유형별 문제풀이"
             android:textSize="30sp" />
 
     </LinearLayout>
@@ -51,10 +51,9 @@
         tools:listitem="@layout/item_move_list"/>
 
     <Button
-        android:id="@+id/mo_scoring_button"
+        android:id="@+id/cha_scoring_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="채점하기"
-        android:onClick="scoring_mo"/>
-
+        android:onClick="scoring_cat"/>
 </LinearLayout>

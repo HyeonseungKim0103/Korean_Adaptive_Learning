@@ -47,6 +47,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ChoiceMoOrCatActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.ChoiceMoOrCat" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ChoiceCatActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.ChoiceCat" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SolveCatActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SolveCat" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     </application>

@@ -19,4 +19,28 @@
         <item>50문제</item>
         <item>전체풀기</item>
     </string-array>
+
+    <string-array name="category">
+        <item>상황과 그에 다른 반응</item>
+        <item>어휘</item>
+        <item>상황 추론</item>
+        <item>내용 일치</item>
+        <item>중심 생각</item>
+        <item>내용 추론</item>
+        <item>어휘/문법</item>
+        <item>빈칸 채우기</item>
+        <item>순서 배열</item>
+    </string-array>
+
+    <string-array name="problem_count_cat">
+        <item>5문제</item>
+        <item>8문제</item>
+        <item>10문제</item>
+    </string-array>
+
+    <string-array name="problem_count_cat2">
+        <item>3문제</item>
+        <item>5문제</item>
+        <item>8문제</item>
+    </string-array>
 </resources>
