@@ -1,8 +1,5 @@
 package com.example.topik1sample;
 
-//채점하기 버튼을 통해 넘어온 화면이다.
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;
@@ -21,16 +20,19 @@ import java.util.HashMap;
 
 import static android.view.View.VISIBLE;
 
-public class ScoringActivity extends AppCompatActivity{
+
+
+public class ScoringCatActivity extends AppCompatActivity {
 
     private UserAdapter uAdapter;
     private ListView listView;
     private ArrayList<UserSet> user_list;
     private String arranged_num;
     private String prob_num;
+    private String prob_set;
+    private String category;
     private String user_answer;
     private String real_answer;
-    private String mRound;
     private String result;
     private String point;
 
@@ -40,6 +42,7 @@ public class ScoringActivity extends AppCompatActivity{
     //따로 class 만들면 좋은데, 여기서는 Main에서 다 만들어 놓음.
     public static final String TAG_RESULTS = "result";
     public static final String PROB_NUM = "prob_num";
+    public static final String PROB_SET = "prob_set";
     public static final String QUESTION = "question";
     public static final String PLURAL_QUESTION = "plural_question";
     public static final String QUESTION_EXAMPLE = "question_example";
@@ -54,6 +57,7 @@ public class ScoringActivity extends AppCompatActivity{
     private static final String PROB_ROUND = "prob_round";
     private static final String USER_ANSWER = "user_answer";
     private static final String REAL_ANSWER = "real_answer";
+    private static final String CATEGORY= "category";
 
     TextView exampleText;
     TextView problemTextView;
@@ -75,9 +79,10 @@ public class ScoringActivity extends AppCompatActivity{
         uAdapter = new UserAdapter(this);
         Intent intent = getIntent();
         user_list = (ArrayList<UserSet>) intent.getSerializableExtra("user_list");
-        mRound = intent.getStringExtra("prob_round");
-        Log.d("Scoring,mRound",mRound);
+        //category = intent.getStringExtra("category");
         uAdapter.setList(user_list);
+        Log.d("scoringCAT,probset0",uAdapter.getItem(0).getProb_set());
+        Log.d("scoringCAT,probset1",uAdapter.getItem(1).getProb_set());
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -94,16 +99,16 @@ public class ScoringActivity extends AppCompatActivity{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 arranged_num = (String) uAdapter.getItem(position).getArranged_num();
                 prob_num = (String) uAdapter.getItem(position).getProb_num();
-                Log.d("Scoring,arranged",arranged_num);
-                Log.d("Scoring,prob_num",prob_num);
+                prob_set = (String)uAdapter.getItem(position).getProb_set();
                 user_answer = (String) uAdapter.getU_answer(position);
                 real_answer = (String) uAdapter.getP_answer(position);
                 result = (String) uAdapter.getResult(position);
                 point = (String) uAdapter.getScore(position);
-                Intent intent = new Intent(ScoringActivity.this, SolutionActivity.class);
+                Intent intent = new Intent(ScoringCatActivity.this, SolutionCatActivity.class);
+                //intent.putExtra(CATEGORY, category);
                 intent.putExtra(ARRANGED_NUM,arranged_num);
                 intent.putExtra(PROB_NUM, prob_num);
-                intent.putExtra(PROB_ROUND, mRound);
+                intent.putExtra(PROB_SET,prob_set);
                 intent.putExtra(USER_ANSWER, user_answer);
                 intent.putExtra(REAL_ANSWER, real_answer);
                 //intent.putExtra(RESULT,result);

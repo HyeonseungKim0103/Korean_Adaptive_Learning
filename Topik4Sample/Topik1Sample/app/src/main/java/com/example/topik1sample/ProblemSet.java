@@ -3,6 +3,7 @@ package com.example.topik1sample;
 import org.json.JSONObject;
 
 public class ProblemSet {
+    private String arranged_num;
     private String choice1;
     private String choice2;
     private String choice3;
@@ -23,11 +24,18 @@ public class ProblemSet {
     boolean checked3;
     boolean checked4;
 
-    public ProblemSet(){}
+    //category 선택할 때 필요함
+    private String prob_set;
 
-    public ProblemSet(String prob_num, String question, String plural_question, String question_example, String text, String choice1,
+    public ProblemSet() {
+    }
+
+    public ProblemSet(String arranged_num, String prob_num, String question, String plural_question, String question_example, String text, String choice1,
+    //public ProblemSet(String prob_num, String question, String plural_question, String question_example, String text, String choice1,
                       String choice2, String choice3, String choice4, String answer, String score, String user_answer, String explanation,
-                      Boolean checked1, Boolean checked2, Boolean checked3, Boolean checked4){
+                      Boolean checked1, Boolean checked2, Boolean checked3, Boolean checked4, String prob_set) {
+
+        this.arranged_num = arranged_num;
         this.prob_num = prob_num;
         this.question = question;
         this.plural_question = plural_question;
@@ -40,15 +48,32 @@ public class ProblemSet {
         this.answer = answer;
         this.score = score;
         this.user_answer = user_answer;
-        this.solution= explanation;
+        this.solution = explanation;
 
         this.checked1 = checked1;
         this.checked2 = checked2;
         this.checked3 = checked3;
         this.checked4 = checked4;
 
+        this.prob_set = prob_set;
+
     }
 
+    public String getProb_set() {
+        return prob_set;
+    }
+
+    public void setProb_set(String prob_set) {
+        this.prob_set = prob_set;
+    }
+
+    public String getArranged_num() {
+        return arranged_num;
+    }
+
+    public void setArranged_num(String arranged_num) {
+        this.arranged_num = arranged_num;
+    }
 
     public boolean isChecked1() {
         return checked1;
@@ -188,6 +213,5 @@ public class ProblemSet {
     public void setAnswer(String answer) {
         this.answer = answer;
     }
-
 
 }

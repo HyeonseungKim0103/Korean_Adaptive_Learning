@@ -1,6 +1,6 @@
 package com.example.topik1sample;
 
-import android.content.Context;
+  import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +60,7 @@ public class ProblemAdapter extends BaseAdapter{
 
     //최적화 작업을 위해서 뷰를 한번 로드하면 재사용하고 표시할 내용만 교체하기 위한 클래스
     static class ViewHolder{
+        TextView arranged_num;
         TextView number;
         TextView common_question;
         TextView plural_question;
@@ -82,6 +83,7 @@ public class ProblemAdapter extends BaseAdapter{
         TextView problemUserAnswer;
         TextView problemRealAnswer;
         TextView score;
+        TextView probSet;
 
         FrameLayout frameDraw;
     }
@@ -98,6 +100,7 @@ public class ProblemAdapter extends BaseAdapter{
                     .inflate(R.layout.item_problem,parent,false); //item_weather에서 가져오기!
             //근데 이것만 가져오면 text랑 image가 안 나오니까 밑에처럼 각각의 View를 가져와야함
             //날씨, 도시, 기온 View
+            TextView arranged_num = convertView.findViewById(R.id.arrangedNumber);
             TextView number = convertView.findViewById(R.id.number);
             TextView common_question = convertView.findViewById(R.id.common_question);
             TextView plural_question = convertView.findViewById(R.id.plural_question);
@@ -119,6 +122,9 @@ public class ProblemAdapter extends BaseAdapter{
 
             FrameLayout frameDraw = convertView.findViewById(R.id.frameDraw);
 
+            TextView probSet = convertView.findViewById(R.id.probSet);
+
+            holder.arranged_num = arranged_num;
             holder.number = number;
             holder.common_question = common_question;
             holder.plural_question = plural_question;
@@ -142,13 +148,13 @@ public class ProblemAdapter extends BaseAdapter{
             holder.problemRealAnswer = problemRealAnswer;
             holder.score = score;
 
+            holder.probSet = probSet;
+
             convertView.setTag(holder);
         } else{ //재사용 할 때
             holder = (ViewHolder) convertView.getTag();
         }
         ProblemSet problemSet = mData.get(position);
-
-
 
         holder.choice1Radio.setChecked(mData.get(position).checked1);
         holder.choice2Radio.setChecked(mData.get(position).checked2);
@@ -173,21 +179,20 @@ public class ProblemAdapter extends BaseAdapter{
                 holder.problemUserAnswer.setText(answer);
                 int numInt = Integer.parseInt(String.valueOf(answer));
                 if (String.valueOf(numInt) == String.valueOf(1)) {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else if (String.valueOf(numInt) == String.valueOf(2)) {
-                    Log.d("ProblemAdapterChangeAns", holder.score.getText().toString());
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else if (String.valueOf(numInt) == String.valueOf(3)) {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 }
             }
-            public void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
-                Log.d("g확인용", String.valueOf(problemNumber));
-                uAdapter.deleteItem(problemNumber);
-                uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),
-                        String.valueOf(point)));
+
+            public void DeleteSetItem(Integer userNumber, int arrangedNumber, int problemNumber, int point) {
+                uAdapter.deleteItem(arrangedNumber);
+                uAdapter.addItem(new UserSet(String.valueOf(arrangedNumber),String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),String.valueOf(problemSet.getProb_set())));
+                //Log.d("prob_set,PAdapter",mData.get(position).getProb_set());
             }
         });
 
@@ -210,21 +215,20 @@ public class ProblemAdapter extends BaseAdapter{
                 holder.problemUserAnswer.setText(answer);
                 int numInt = Integer.parseInt(String.valueOf(answer));
                 if (String.valueOf(numInt) == String.valueOf(1)) {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else if (String.valueOf(numInt) == String.valueOf(2)) {
-                    Log.d("ProblemAdapterChangeAns", holder.score.getText().toString());
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else if (String.valueOf(numInt) == String.valueOf(3)) {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 }
             }
-            public void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
-                Log.d("g확인용", String.valueOf(problemNumber));
-                uAdapter.deleteItem(problemNumber);
-                uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),
-                        String.valueOf(point)));
+
+            public void DeleteSetItem(Integer userNumber, int arrangedNumber, int problemNumber, int point) {
+                uAdapter.deleteItem(arrangedNumber);
+                uAdapter.addItem(new UserSet(String.valueOf(arrangedNumber),String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),String.valueOf(problemSet.getProb_set())));
+                //Log.d("prob_set,PAdapter",mData.get(position).getProb_set());
             }
         });
 
@@ -247,22 +251,22 @@ public class ProblemAdapter extends BaseAdapter{
                 holder.problemUserAnswer.setText(answer);
                 int numInt = Integer.parseInt(String.valueOf(answer));
                 if (String.valueOf(numInt) == String.valueOf(1)) {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else if (String.valueOf(numInt) == String.valueOf(2)) {
-                    Log.d("ProblemAdapterChangeAns", holder.score.getText().toString());
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else if (String.valueOf(numInt) == String.valueOf(3)) {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 }
             }
-            public void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
-                Log.d("g확인용", String.valueOf(problemNumber));
-                uAdapter.deleteItem(problemNumber);
-                uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),
-                        String.valueOf(point)));
+
+            public void DeleteSetItem(Integer userNumber, int arrangedNumber, int problemNumber, int point) {
+                uAdapter.deleteItem(arrangedNumber);
+                uAdapter.addItem(new UserSet(String.valueOf(arrangedNumber),String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),String.valueOf(problemSet.getProb_set())));
+                //Log.d("prob_set,PAdapter",mData.get(position).getProb_set());
             }
+
         });
 
         holder.choice4Radio.setOnClickListener(new View.OnClickListener(){
@@ -284,27 +288,28 @@ public class ProblemAdapter extends BaseAdapter{
                 holder.problemUserAnswer.setText(answer);
                 int numInt = Integer.parseInt(String.valueOf(answer));
                 if (String.valueOf(numInt) == String.valueOf(1)) {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else if (String.valueOf(numInt) == String.valueOf(2)) {
-                    Log.d("ProblemAdapterChangeAns", holder.score.getText().toString());
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else if (String.valueOf(numInt) == String.valueOf(3)) {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 } else {
-                    DeleteSetItem(numInt, Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
+                    DeleteSetItem(numInt, Integer.parseInt(holder.arranged_num.getText().toString()), Integer.parseInt(holder.number.getText().toString()), Integer.parseInt(holder.score.getText().toString()));
                 }
             }
-            public void DeleteSetItem(Integer userNumber, int problemNumber, int point) {
-                Log.d("g확인용", String.valueOf(problemNumber));
-                uAdapter.deleteItem(problemNumber);
-                uAdapter.addItem(new UserSet(String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),
-                        String.valueOf(point)));
+
+            public void DeleteSetItem(Integer userNumber, int arrangedNumber, int problemNumber, int point) {
+                uAdapter.deleteItem(arrangedNumber);
+                uAdapter.addItem(new UserSet(String.valueOf(arrangedNumber),String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),String.valueOf(problemSet.getProb_set())));
+                Log.d("prob_set,PAdapter",problemSet.getProb_set());
             }
         });
 
         //데이터 설정
         holder.number.setText(problemSet.getProb_num());
+        holder.arranged_num.setText(problemSet.getArranged_num()                                         );
         holder.common_question.setText(problemSet.getQuestion());
+        holder.probSet.setText(problemSet.getProb_set());
         if(holder.common_question.getText().equals("")){
             holder.common_question.setVisibility(View.GONE);
         }
@@ -322,7 +327,6 @@ public class ProblemAdapter extends BaseAdapter{
         if(!holder.textTextView.getText().equals("")){
             holder.textTextView.setVisibility(View.VISIBLE);
         }
-        holder.number.setText(String.valueOf(problemSet.getProb_num()));
 
         holder.score.setText(problemSet.getScore());
         holder.choice1Radio.setText(problemSet.getChoice1());
@@ -341,8 +345,6 @@ public class ProblemAdapter extends BaseAdapter{
             //O, X그리기
             O_drawing O_drawing = new O_drawing(convertView.getContext());
             X_drawing X_drawing = new X_drawing(convertView.getContext());
-            Log.d("user_answer", user_answer);
-            Log.d("real_answer",real_answer);
             if(Integer.parseInt(user_answer) ==Integer.parseInt(real_answer) ){
                 //Log.d("O","O");
                 holder.frameDraw.addView(O_drawing);
@@ -351,6 +353,7 @@ public class ProblemAdapter extends BaseAdapter{
                 holder.frameDraw.addView(X_drawing);
             }
 
+            //solution 용
             if(user_answer.equals("1")){
                 holder.choice1Radio.setChecked(TRUE);
                 holder.choice2Radio.setChecked(FALSE);
@@ -376,7 +379,6 @@ public class ProblemAdapter extends BaseAdapter{
                 holder.choice4Radio.setChecked(TRUE);
             }
         }
-
         return convertView;
     }
 

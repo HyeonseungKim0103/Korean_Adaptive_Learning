@@ -56,11 +56,11 @@ public class SolveMoActivity extends AppCompatActivity{
     private static final String PROB_ROUND = "prob_round";
     private List<UserSet> userList;
     private UserAdapter uAdapter = null;
-    String mRound;
     private int mPoint = 0;
 
     //따로 class 만들면 좋은데, 여기서는 Main에서 다 만들어 놓음.
     public static final String TAG_RESULTS = "result";
+    public static final String PROB_SET = "prob_set";
     public static final String PROB_NUM = "prob_num";
     public static final String QUESTION = "question";
     public static final String PLURAL_QUESTION = "plural_question";
@@ -88,7 +88,7 @@ public class SolveMoActivity extends AppCompatActivity{
     public static final String CHOICE_ROUND = "choice_round";
     public static final String CHOICE_PROB = "choice_prob";
     private String selected_round;
-    private String selected_prob;
+    private String selected_problem;
     private String response_result;
 
     //번호이동
@@ -111,7 +111,7 @@ public class SolveMoActivity extends AppCompatActivity{
         probList = new ArrayList<HashMap<String, String>>(); //우리껄로 만들거면 우리가 이미 만들어놓은 ProblemSet class나 UserSet class Type으로
         //리스트 만들면 될 듯.
 //        getData("http://192.168.0.5:5000/topik1_exam"); // 스벅에서
-        getData("http://172.30.1.6:5000/topik1_exam_mo/");
+        getData("http://172.30.1.12:5000/topik1_exam_mo/");
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
@@ -120,14 +120,14 @@ public class SolveMoActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
         selected_round = intent.getStringExtra(CHOICE_ROUND);
-        selected_prob = intent.getStringExtra(CHOICE_PROB);
+        selected_problem = intent.getStringExtra(CHOICE_PROB);
 
         //요청
         OkHttpClient okHttpClient = new OkHttpClient();
 
-        RequestBody formbody = new FormBody.Builder().add("selected_problem",selected_prob).add("selected_round",selected_round).build();
+        RequestBody formbody = new FormBody.Builder().add("selected_problem",selected_problem).add("selected_round",selected_round).build();
 
-        Request request = new Request.Builder().url("http://172.30.1.6:5000/topik1_exam_mo/").post(formbody).build();
+        Request request = new Request.Builder().url("http://172.30.1.12:5000/topik1_exam_mo/").post(formbody).build();
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
@@ -141,7 +141,7 @@ public class SolveMoActivity extends AppCompatActivity{
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 response_result = response.body().string();
-                //Log.d("이것인가??",response_result);
+                Log.d("이것인가??",response_result);
             }
         });
 
@@ -182,6 +182,7 @@ public class SolveMoActivity extends AppCompatActivity{
 
             for(int i = 0; i < problemList.length(); i++){
                 JSONObject c = problemList.getJSONObject(i);
+                String prob_set = c.getString(PROB_SET);
                 String prob_num = c.getString(PROB_NUM);
                 String question = c.getString(QUESTION); //각 칼럼들 가져오기. 여기서는 다 String이네.
                 String plural_question = c.getString(PLURAL_QUESTION);
@@ -216,16 +217,15 @@ public class SolveMoActivity extends AppCompatActivity{
                 if(text.equals("NA")){
                     text = "";
                 }
-
 //                prob_data.add(new ProblemSet(prob_num, question,plural_question ,question_example, text, choice1,
 //                        choice2, choice3, choice4,answer, score, null,solution));
 
-                prob_data.add(new ProblemSet(String.valueOf(i+1), question,plural_question ,question_example, text, choice1,
-                        choice2, choice3, choice4,answer, score, null,solution,checked1,checked2,checked3,checked4));
+                prob_data.add(new ProblemSet(String.valueOf(i+1),prob_num, question, plural_question ,question_example, text, choice1,
+                        choice2, choice3, choice4,answer, score, null,solution,checked1,checked2,checked3,checked4, prob_set));
             }
 
             if(!prob_num_list.isEmpty()){
-                for(int j = 0; j < Integer.parseInt(selected_prob); j++ ){
+                for(int j = 0; j < Integer.parseInt(selected_problem); j++ ){
                     gridItem.add(prob_num_list.get(j).toString());
                 }
             } else{
@@ -243,10 +243,10 @@ public class SolveMoActivity extends AppCompatActivity{
 
     public void getData(String url){
         class GetDataJSON extends AsyncTask<String, Void, String>{
-
             @Override
             protected String doInBackground(String... params) {
                 String uri = params[0]; //위에서 내가 써놨던 http://192.168.0.4/simpletopik1.php 이거 가져옴.
+
                 //getDate(String url)을 params로 받아서 링크를 가져옴.
 
                 BufferedReader bufferedReader = null;
@@ -262,7 +262,6 @@ public class SolveMoActivity extends AppCompatActivity{
                     while((json = bufferedReader.readLine()) != null) {
                         sb.append(json + "\n");
                     }
-
                     return sb.toString().trim(); // 받아온 json의 공백 제거.
                 } catch (Exception e){
                     return null;
@@ -278,7 +277,6 @@ public class SolveMoActivity extends AppCompatActivity{
 //                } else{
 //                    Log.d("없다", "없다...");
 //                }
-
                 myJson = response_result;
                 showList();
             }
@@ -291,11 +289,10 @@ public class SolveMoActivity extends AppCompatActivity{
         if (!pAdapter.isEmpty()) {
             uAdapter = pAdapter.return_uAdapter();
             userList = (ArrayList<UserSet>) uAdapter.returnList();
-
             Intent intent = new Intent(this, ScoringActivity.class);
             intent.putExtra(USER_LIST, (Serializable) userList);
-            intent.putExtra(PROB_ROUND, mRound);
-            intent.putExtra(PROB_SCORE, mPoint);
+            intent.putExtra(PROB_ROUND, selected_round);
+            //intent.putExtra(PROB_SCORE, mPoint);
             startActivity(intent);
         }
     }

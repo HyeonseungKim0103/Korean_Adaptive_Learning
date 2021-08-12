@@ -48,14 +48,14 @@ public class SolveCatActivity extends AppCompatActivity{
 
     public static final String USER_LIST = "user_list";
     private static final String PROB_SCORE = "total_point";
-    private static final String PROB_ROUND = "prob_round";
+    private static final String CATEGORY = "category";
 
-    String mRound;
     private int mPoint = 0;
 
     //따로 class 만들면 좋은데, 여기서는 Main에서 다 만들어 놓음.
     public static final String TAG_RESULTS = "result";
     public static final String PROB_NUM = "prob_num";
+    public static final String PROB_SET = "prob_set";
     public static final String QUESTION = "question";
     public static final String PLURAL_QUESTION = "plural_question";
     public static final String QUESTION_EXAMPLE = "question_example";
@@ -101,7 +101,7 @@ public class SolveCatActivity extends AppCompatActivity{
         //리스트 만들면 될 듯.
 //        getData("http://192.168.0.6:5000/topik1_exam_cat");
 //        getData("http://192.168.0.22:5000/topik1_exam_cat");
-        getData("http://172.30.1.6:5000/topik1_exam_cat/");
+        getData("http://172.30.1.12:5000/topik1_exam_cat/");
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
@@ -120,7 +120,7 @@ public class SolveCatActivity extends AppCompatActivity{
         RequestBody formbody = new FormBody.Builder().add("selected_problem_cat",selected_prob_cat).add("selected_cat",selected_cat).build();
 
 //        Request request = new Request.Builder().url("http:192.168.0.6:5000/topik1_exam_cat").post(formbody).build();
-        Request request = new Request.Builder().url("http://172.30.1.6:5000/topik1_exam_cat/").post(formbody).build();
+        Request request = new Request.Builder().url("http://172.30.1.12:5000/topik1_exam_cat/").post(formbody).build();
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
@@ -175,6 +175,7 @@ public class SolveCatActivity extends AppCompatActivity{
             for(int i = 0; i < problemList.length(); i++){
                 JSONObject c = problemList.getJSONObject(i);
                 String prob_num = c.getString(PROB_NUM);
+                String prob_set = c.getString(PROB_SET);
                 String question = c.getString(QUESTION); //각 칼럼들 가져오기. 여기서는 다 String이네.
                 String plural_question = c.getString(PLURAL_QUESTION);
                 String question_example = c.getString(QUESTION_EXAMPLE);
@@ -214,8 +215,8 @@ public class SolveCatActivity extends AppCompatActivity{
 //                prob_data.add(new ProblemSet(prob_num, question,plural_question ,question_example, text, choice1,
 //                        choice2, choice3, choice4));
 
-                prob_data.add(new ProblemSet(String.valueOf(i+1), question,plural_question ,question_example, text, choice1,
-                        choice2, choice3, choice4, answer, score, null,solution,b,b2,b3,b4));
+                prob_data.add(new ProblemSet(String.valueOf(i+1),prob_num, question,plural_question ,question_example, text, choice1,
+                        choice2, choice3, choice4, answer, score, null,solution,b,b2,b3,b4,prob_set));
 
 
             }
@@ -286,11 +287,10 @@ public class SolveCatActivity extends AppCompatActivity{
         if (!pAdapter.isEmpty()) {
             uAdapter = pAdapter.return_uAdapter();
             userList = (ArrayList<UserSet>) uAdapter.returnList();
-
-            Intent intent = new Intent(this, ScoringActivity.class);
+            Intent intent = new Intent(this, ScoringCatActivity.class);
             intent.putExtra(USER_LIST, (Serializable) userList);
-            intent.putExtra(PROB_ROUND, mRound);
-            intent.putExtra(PROB_SCORE, mPoint);
+            intent.putExtra(CATEGORY, selected_cat);
+            //intent.putExtra(PROB_SCORE, mPoint);
             startActivity(intent);
         }
     }

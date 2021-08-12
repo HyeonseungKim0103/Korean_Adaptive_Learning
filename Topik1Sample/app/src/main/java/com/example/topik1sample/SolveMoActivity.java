@@ -89,7 +89,7 @@ public class SolveMoActivity extends AppCompatActivity{
         //리스트 만들면 될 듯.
 //        getData("http://192.168.0.6:5000/topik1_exam_mo");
 //        getData("http://192.168.0.22:5000/topik1_exam_mo"); //plant planet에서
-        getData("http://172.30.1.30:5000/topik1_exam_mo");
+        getData("http://172.30.1.6:5000/topik1_exam_mo");
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
@@ -108,7 +108,7 @@ public class SolveMoActivity extends AppCompatActivity{
 
 //        Request request = new Request.Builder().url("http:192.168.0.6:5000/topik1_exam_mo").post(formbody).build();
 //        Request request = new Request.Builder().url("http://192.168.0.22:5000/topik1_exam_mo").post(formbody).build(); //plant_planet에서
-        Request request = new Request.Builder().url("http://172.30.1.30:5000/topik1_exam_mo").post(formbody).build(); //plant_planet에
+        Request request = new Request.Builder().url("http://172.30.1.6:5000/topik1_exam_mo").post(formbody).build(); //plant_planet에
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {

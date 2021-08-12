@@ -33,11 +33,9 @@ public class UserAdapter extends BaseAdapter{
     }
 
     public void deleteItem(int problem_number) {
-        //Log.d("UserAdapter 에러 찾는 중 2",String.valueOf(problem_number));
         int i =1;
         while (i <= mUserSet.size()){
-            //Log.d("UserAdapter 에러 찾는 중 3",String.valueOf(problem_number));
-            if(mUserSet.get(mUserSet.size()-i).getProb_num() == String.valueOf(problem_number)){
+            if(mUserSet.get(mUserSet.size()-i).getArranged_num() == String.valueOf(problem_number)){
                 mUserSet.remove(mUserSet.get(mUserSet.size()-i));
             }
             i +=1;
@@ -51,10 +49,16 @@ public class UserAdapter extends BaseAdapter{
 
     @Override
     public UserSet getItem(int position) {
-        return new UserSet(getU_answer(position).toString(),
-                getP_answer(position).toString(),getNumber(position).toString());
+//        return new UserSet(getArranged_num(position).toString(),getU_answer(position).toString(),getNumber(position).toString(),
+//                getP_answer(position).toString());
+        return new UserSet(getArranged_num(position).toString(),getNumber(position).toString(),getU_answer(position).toString(),
+                getP_answer(position).toString(),getProb_set(position).toString());
     }
 
+    public Object getProb_set(int position) { return mUserSet.get(position).getProb_set();}
+    public Object getArranged_num(int position) {
+        return mUserSet.get(position).getArranged_num();
+    }
     public Object getU_answer(int position){
         return mUserSet.get(position).getU_answer();
     }
@@ -88,7 +92,7 @@ public class UserAdapter extends BaseAdapter{
             resultView = (ResultView)convertView;
         }
 
-        resultView.setResultNumber(mUserSet.get(position).getProb_num());
+        resultView.setResultNumber(mUserSet.get(position).getArranged_num());
         resultView.setUserAnswer(mUserSet.get(position).getU_answer());
         resultView.setRealAnswer(mUserSet.get(position).getP_answer());
         resultView.setResult(mUserSet.get(position).getFinal_result());

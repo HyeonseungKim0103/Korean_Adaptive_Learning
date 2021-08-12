@@ -35,4 +35,5 @@ public class ResultView extends LinearLayout {
     public void setRealAnswer(String data) {realAnswer.setText(data);}
 
     public void setResult(String data) {result.setText(data);};
+
 }
