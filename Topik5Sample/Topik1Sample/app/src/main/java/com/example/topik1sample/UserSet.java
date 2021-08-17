@@ -143,8 +143,8 @@ public class UserSet implements Serializable,Comparable<UserSet>{
     public int compareTo(UserSet other) {
         // TODO Auto-generated method stub
         //int target = Integer.parseInt(other.prob_num);
-        if(prob_num == other.prob_num) return 0;
-        else if(Integer.parseInt(prob_num) > Integer.parseInt(other.prob_num)) return 1;
+        if(arranged_num == other.arranged_num) return 0;
+        else if(Integer.parseInt(arranged_num) > Integer.parseInt(other.arranged_num)) return 1;
         else return -1;
     }
 

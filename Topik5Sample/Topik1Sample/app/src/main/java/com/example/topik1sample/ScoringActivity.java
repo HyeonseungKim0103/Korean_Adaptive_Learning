@@ -13,11 +13,22 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.view.View.VISIBLE;
 
@@ -61,6 +72,13 @@ public class ScoringActivity extends AppCompatActivity{
     JSONArray problemList = null;
     ArrayList<HashMap<String,String>> probList; //여기에 DB의 data를 다 넣을 거임.
 
+    //DB에 문제풀이 기록
+    String p1;
+    String p2;
+    String p3;
+    String p4;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +106,35 @@ public class ScoringActivity extends AppCompatActivity{
         listView.setVisibility(VISIBLE);
         listView.setAdapter(uAdapter);
 
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        //userList 값 전달
+        for(UserSet items : user_list) { //for문을 통한 전체출력
+            p1 = items.getProb_num();
+            p2 = items.getU_answer();
+            p3 = items.getR_answer();
+            p4 = items.getFinal_result();
+
+            RequestBody formbody = new FormBody.Builder().add("prob_num", p1).add("user_answer", p2).add("real_answer", p3)
+                    .add("result", p4).build();
+
+            Request request = new Request.Builder().url("http://192.168.0.6:5000/insert_prob/").post(formbody).build();
+            okHttpClient.newCall(request).enqueue(new Callback(){
+                @Override
+                public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+
+                }
+            });
+
         //클릭 했을 때 해당 문제가 출력 되는 것. 해설도 같이
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -110,5 +157,7 @@ public class ScoringActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
+
+        }
     }
 }

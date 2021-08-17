@@ -84,9 +84,9 @@ public class SolveCatActivity extends AppCompatActivity{
         listview = findViewById(R.id.listView);
         probList = new ArrayList<HashMap<String, String>>(); //우리껄로 만들거면 우리가 이미 만들어놓은 ProblemSet class나 UserSet class Type으로
         //리스트 만들면 될 듯.
-//        getData("http://192.168.0.6:5000/topik1_exam_cat");
+        getData("http://192.168.0.6:5000/topik1_exam_cat");
 //        getData("http://192.168.0.22:5000/topik1_exam_cat");
-        getData("http://172.30.1.6:5000/topik1_exam_cat");
+//        getData("http://172.30.1.6:5000/topik1_exam_cat");
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
