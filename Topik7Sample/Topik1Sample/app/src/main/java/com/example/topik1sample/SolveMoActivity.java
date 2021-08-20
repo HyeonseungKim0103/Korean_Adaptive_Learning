@@ -75,7 +75,7 @@ public class SolveMoActivity extends AppCompatActivity{
     public static final String SCORE = "score";
     public static final String SOLUTION = "explanation";
     public static final String SECTION = "section";
-
+    public static final String IMAGE = "image";
     public static ProblemAdapter pAdapter = null;
 
     TextView exampleText;
@@ -112,8 +112,7 @@ public class SolveMoActivity extends AppCompatActivity{
         listview = findViewById(R.id.listView);
         probList = new ArrayList<HashMap<String, String>>(); //우리껄로 만들거면 우리가 이미 만들어놓은 ProblemSet class나 UserSet class Type으로
         //리스트 만들면 될 듯.
-//        getData("http://192.168.0.5:5000/topik1_exam"); // 스벅에서
-        getData("http://172.30.1.31:5000/topik1_exam_mo/");
+        getData("http://192.168.0.6:5000/topik1_exam_mo/");
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
@@ -129,7 +128,7 @@ public class SolveMoActivity extends AppCompatActivity{
 
         RequestBody formbody = new FormBody.Builder().add("selected_problem",selected_problem).add("selected_round",selected_round).build();
 
-        Request request = new Request.Builder().url("http://172.30.1.31:5000/topik1_exam_mo/").post(formbody).build();
+        Request request = new Request.Builder().url("http://192.168.0.6:5000/topik1_exam_mo/").post(formbody).build();
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
@@ -198,7 +197,7 @@ public class SolveMoActivity extends AppCompatActivity{
                     String answer = c.getString(ANSWER);
                     String score = c.getString(SCORE);
                     String solution = c.getString(SOLUTION);
-                    //prob_num_list.add(Integer.parseInt(prob_num));
+                    String image = c.getString(IMAGE);
 
                     boolean checked1 = false;
                     boolean checked2 = false;
@@ -224,7 +223,7 @@ public class SolveMoActivity extends AppCompatActivity{
 //                        choice2, choice3, choice4,answer, score, null,solution));
 
                     prob_data.add(new ProblemSet(String.valueOf(i + 1), prob_num, question, plural_question, question_example, text, choice1,
-                            choice2, choice3, choice4, answer, score, null, solution, checked1, checked2, checked3, checked4, prob_set));
+                            choice2, choice3, choice4, answer, score, null, solution, checked1, checked2, checked3, checked4, prob_set, image));
                 }
 
                 if (!prob_num_list.isEmpty()) {
@@ -275,15 +274,15 @@ public class SolveMoActivity extends AppCompatActivity{
 
             @Override
             protected void onPostExecute(String result) { //doInBackground에서 return한 값을 받음.
-//                if(result != null){
-//                    myJson = result;
-//                    showList();
-//
-//                } else{
-//                    Log.d("없다", "없다...");
-//                }
-                myJson = response_result;
-                showList();
+                if(response_result != null){
+                    myJson = response_result;
+                    showList();
+
+                } else{
+                    Log.d("없다", "없다...");
+                }
+//                myJson = response_result;
+//                showList();
             }
         }
         GetDataJSON g = new GetDataJSON();

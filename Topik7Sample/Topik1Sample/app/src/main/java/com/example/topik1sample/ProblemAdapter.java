@@ -1,20 +1,35 @@
 package com.example.topik1sample;
 
-  import android.content.Context;
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
 import java.util.List;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
@@ -60,6 +75,10 @@ public class ProblemAdapter extends BaseAdapter{
 
     //최적화 작업을 위해서 뷰를 한번 로드하면 재사용하고 표시할 내용만 교체하기 위한 클래스
     static class ViewHolder{
+        LinearLayout number_linear;
+        LinearLayout radio_linear;
+        LinearLayout image_linear;
+
         TextView arranged_num;
         TextView number;
         TextView common_question;
@@ -86,6 +105,19 @@ public class ProblemAdapter extends BaseAdapter{
         TextView probSet;
 
         FrameLayout frameDraw;
+
+        CardView imageCard1;
+        CardView imageCard2;
+        CardView imageCard3;
+        CardView imageCard4;
+
+        ImageView choiceImage1;
+        ImageView choiceImage2;
+        ImageView choiceImage3;
+        ImageView choiceImage4;
+
+        ImageView textImage;
+
     }
 
     @Override
@@ -98,8 +130,7 @@ public class ProblemAdapter extends BaseAdapter{
             holder = new ViewHolder();
             convertView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_problem,parent,false); //item_weather에서 가져오기!
-            //근데 이것만 가져오면 text랑 image가 안 나오니까 밑에처럼 각각의 View를 가져와야함
-            //날씨, 도시, 기온 View
+
             TextView arranged_num = convertView.findViewById(R.id.arrangedNumber);
             TextView number = convertView.findViewById(R.id.number);
             TextView common_question = convertView.findViewById(R.id.common_question);
@@ -121,6 +152,19 @@ public class ProblemAdapter extends BaseAdapter{
             TextView score = convertView.findViewById(R.id.prob_point);
 
             FrameLayout frameDraw = convertView.findViewById(R.id.frameDraw);
+
+            //이미지
+            CardView imageCard1 = convertView.findViewById(R.id.image_card1);
+            CardView imageCard2 = convertView.findViewById(R.id.image_card2);
+            CardView imageCard3 = convertView.findViewById(R.id.image_card3);
+            CardView imageCard4 = convertView.findViewById(R.id.image_card4);
+
+            ImageView choiceImage1 = convertView.findViewById(R.id.choiceImage1);
+            ImageView choiceImage2 = convertView.findViewById(R.id.choiceImage2);
+            ImageView choiceImage3 = convertView.findViewById(R.id.choiceImage3);
+            ImageView choiceImage4 = convertView.findViewById(R.id.choiceImage4);
+            ImageView textImage = convertView.findViewById(R.id.textImage);
+
 
             TextView probSet = convertView.findViewById(R.id.probSet);
 
@@ -150,11 +194,207 @@ public class ProblemAdapter extends BaseAdapter{
 
             holder.probSet = probSet;
 
+            //이미지
+            holder.imageCard1 = imageCard1;
+            holder.imageCard2 = imageCard2;
+            holder.imageCard3 = imageCard3;
+            holder.imageCard4 = imageCard4;
+
+            holder.choiceImage1 = choiceImage1;
+            holder.choiceImage2 = choiceImage2;
+            holder.choiceImage3 = choiceImage3;
+            holder.choiceImage4 = choiceImage4;
+
+            holder.textImage = textImage;
+
             convertView.setTag(holder);
         } else{ //재사용 할 때
             holder = (ViewHolder) convertView.getTag();
         }
         ProblemSet problemSet = mData.get(position);
+//        Log.d("지문",problemSet.getText());
+
+        //이미지 처리
+        holder.textImage.setVisibility(GONE);
+        holder.textTextView.setVisibility(VISIBLE);
+        holder.textTextView.setText(problemSet.getText());
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+        StorageReference pathReference = storageReference.child("topik").child("topik1").child("이미지");
+
+        //1. 지문
+        if(problemSet.getText().equals("image")){
+            holder.textTextView.setVisibility(GONE);
+            holder.textImage.setVisibility(VISIBLE);
+            String str_image = problemSet.getImage();
+
+            if (pathReference == null) {
+                Log.d("사진없음", "사진이 없습니다.");
+            } else {
+                Log.d("이미지 이름", str_image);
+                StorageReference submitProfile_image = storageReference.child("topik/topik1/이미지/" + str_image + ".PNG");
+                submitProfile_image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(parent.getContext()).load(uri).into(holder.textImage);
+                    }
+                }).addOnFailureListener(new OnFailureListener(){
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+            }
+        }
+
+        if(problemSet.getText().equals("")){
+            holder.textTextView.setVisibility(GONE);
+        }
+//        else if(problemSet.getText().equals("image")){
+//            holder.textTextView.setVisibility(View.GONE);
+//            holder.textImage.setVisibility(VISIBLE);
+//            String str_image = problemSet.getImage();
+//
+//            if (pathReference == null) {
+//                Log.d("사진없음", "사진이 없습니다.");
+//            } else {
+//                StorageReference submitProfile_image = storageReference.child("topik1/" + str_image + ".PNG");
+//                submitProfile_image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+//                    @Override
+//                    public void onSuccess(Uri uri) {
+//                        Glide.with(parent.getContext()).load(uri).into(holder.textImage);
+//                    }
+//                }).addOnFailureListener(new OnFailureListener(){
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//
+//                    }
+//                });
+//            }
+//
+//        }
+
+
+//        if(!problemSet.getText().equals("image") && !holder.textTextView.getText().equals("")){
+//            holder.textTextView.setVisibility(VISIBLE);
+//            holder.textTextView.setText(problemSet.getText());
+//        } else if(problemSet.getText().equals("image")) {
+//            holder.textTextView.setVisibility(View.GONE);
+//            String str_image = problemSet.getImage();
+//
+//            if (pathReference == null) {
+//                Log.d("사진없음", "사진이 없습니다.");
+//            } else {
+//                StorageReference submitProfile_image = storageReference.child("topik1/" + str_image + ".PNG");
+//                submitProfile_image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+//                    @Override
+//                    public void onSuccess(Uri uri) {
+//                        Glide.with(parent.getContext()).load(uri).into(holder.textImage);
+//                    }
+//                }).addOnFailureListener(new OnFailureListener(){
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//
+//                    }
+//                });
+//            }
+//        }
+
+        //2. 선지
+        holder.imageCard1.setVisibility(GONE);
+        holder.imageCard2.setVisibility(GONE);
+        holder.imageCard3.setVisibility(GONE);
+        holder.imageCard4.setVisibility(GONE);
+
+        holder.choiceImage1.setVisibility(GONE);
+        holder.choiceImage2.setVisibility(GONE);
+        holder.choiceImage3.setVisibility(GONE);
+        holder.choiceImage4.setVisibility(GONE);
+
+        if(!problemSet.getChoice1().equals("image")){
+            holder.choice1Radio.setText(problemSet.getChoice1());
+            holder.choice2Radio.setText(problemSet.getChoice2());
+            holder.choice3Radio.setText(problemSet.getChoice3());
+            holder.choice4Radio.setText(problemSet.getChoice4());
+        } else{
+            holder.imageCard1.setVisibility(VISIBLE);
+            holder.imageCard2.setVisibility(VISIBLE);
+            holder.imageCard3.setVisibility(VISIBLE);
+            holder.imageCard4.setVisibility(VISIBLE);
+
+            holder.choiceImage1.setVisibility(VISIBLE);
+            holder.choiceImage2.setVisibility(VISIBLE);
+            holder.choiceImage3.setVisibility(VISIBLE);
+            holder.choiceImage4.setVisibility(VISIBLE);
+
+            holder.choice1Radio.setText("");
+            holder.choice2Radio.setText("");
+            holder.choice3Radio.setText("");
+            holder.choice4Radio.setText("");
+
+            String str = problemSet.getImage();
+            String [] array = str.split(",");
+
+            if(pathReference == null) {
+                Log.d("사진없음", "사진이 없습니다.");
+            } else{
+                StorageReference submitProfile = storageReference.child("topik/topik1/이미지/" + array[0] + ".PNG");
+                submitProfile.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(parent.getContext()).load(uri).into(holder.choiceImage1);
+                    }
+                }).addOnFailureListener(new OnFailureListener(){
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+                Log.d("사진1", array[0]);
+
+                StorageReference submitProfile2 = storageReference.child("topik/topik1/이미지/" + array[1] + ".PNG");
+                submitProfile2.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(parent.getContext()).load(uri).into(holder.choiceImage2);
+                    }
+                }).addOnFailureListener(new OnFailureListener(){
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
+                StorageReference submitProfile3 = storageReference.child("topik/topik1/이미지/" + array[2] + ".PNG");
+                submitProfile3.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(parent.getContext()).load(uri).into(holder.choiceImage3);
+                    }
+                }).addOnFailureListener(new OnFailureListener(){
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
+                StorageReference submitProfile4 = storageReference.child("topik/topik1/이미지/" + array[3] + ".PNG");
+                submitProfile4.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(parent.getContext()).load(uri).into(holder.choiceImage4);
+                    }
+                }).addOnFailureListener(new OnFailureListener(){
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
+            }
+
+        }
 
         holder.choice1Radio.setChecked(mData.get(position).checked1);
         holder.choice2Radio.setChecked(mData.get(position).checked2);
@@ -266,6 +506,7 @@ public class ProblemAdapter extends BaseAdapter{
                 uAdapter.addItem(new UserSet(String.valueOf(arrangedNumber),String.valueOf(problemNumber), String.valueOf(userNumber), holder.problemRealAnswer.getText().toString(),String.valueOf(problemSet.getProb_set()),String.valueOf(problemSet.getScore())));
                 //Log.d("prob_set,PAdapter",mData.get(position).getProb_set());
             }
+
         });
 
         holder.choice4Radio.setOnClickListener(new View.OnClickListener(){
@@ -306,32 +547,24 @@ public class ProblemAdapter extends BaseAdapter{
 
         //데이터 설정
         holder.number.setText(problemSet.getProb_num());
-        holder.arranged_num.setText(problemSet.getArranged_num()                                         );
+        holder.arranged_num.setText(problemSet.getArranged_num());
         holder.common_question.setText(problemSet.getQuestion());
         holder.probSet.setText(problemSet.getProb_set());
         if(holder.common_question.getText().equals("")){
-            holder.common_question.setVisibility(View.GONE);
+            holder.common_question.setVisibility(GONE);
         }
         holder.plural_question.setText(problemSet.getPlural_question());
         if(!holder.plural_question.getText().equals("")){
-            holder.plural_question.setVisibility(View.VISIBLE);
+            holder.plural_question.setVisibility(VISIBLE);
         }
         holder.problemTextView.setText(problemSet.getQuestion_example());
         if(!holder.problemTextView.getText().equals("")){
-            holder.exampleText.setVisibility(View.VISIBLE);
+            holder.exampleText.setVisibility(VISIBLE);
         } else{
-            holder.exampleText.setVisibility(View.GONE);
-        }
-        holder.textTextView.setText(problemSet.getText());
-        if(!holder.textTextView.getText().equals("")){
-            holder.textTextView.setVisibility(View.VISIBLE);
+            holder.exampleText.setVisibility(GONE);
         }
 
         holder.score.setText(problemSet.getScore());
-        holder.choice1Radio.setText(problemSet.getChoice1());
-        holder.choice2Radio.setText(problemSet.getChoice2());
-        holder.choice3Radio.setText(problemSet.getChoice3());
-        holder.choice4Radio.setText(problemSet.getChoice4());
         holder.solutionText.setText(problemSet.getSolution());
 
         holder.problemRealAnswer.setText(problemSet.getAnswer());

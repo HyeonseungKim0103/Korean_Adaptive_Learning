@@ -55,6 +55,7 @@ public class SolutionActivity extends AppCompatActivity{
     public static final String ARRANGED_NUM = "arranged_num";
     public static final String USER_ANSWER = "user_answer";
     public static final String REAL_ANSWER = "real_answer";
+    public static final String IMAGE = "image";
 
     TextView exampleText;
     TextView problemTextView;
@@ -100,7 +101,7 @@ public class SolutionActivity extends AppCompatActivity{
         //리스트 만들면 될 듯.
 
         //intent 정보로 문제 filtering
-        getData("http://172.30.1.31:5000/topik1_solution/"); // visual code 상에서 구현
+        getData("http://192.168.0.6:5000/topik1_solution/"); // visual code 상에서 구현
 
         //돌리려면 VS code를 실행해놓고 해야 나옴. 실행 안 하면 빈화면만 출력.
 
@@ -112,7 +113,7 @@ public class SolutionActivity extends AppCompatActivity{
         //RequestBody formbody = new FormBody.Builder().add("selected_problem",prob_num).add("selected_round",selected_round).build();
         RequestBody formbody = new FormBody.Builder().add("prob_num",prob_num).add("prob_round",prob_round).build();
 
-        Request request = new Request.Builder().url("http://172.30.1.31:5000/topik1_solution/").post(formbody).build();
+        Request request = new Request.Builder().url("http://192.168.0.6:5000/topik1_solution/").post(formbody).build();
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
@@ -152,8 +153,7 @@ public class SolutionActivity extends AppCompatActivity{
                 String score = c.getString(SCORE);
                 String solution = c.getString(SOLUTION);
                 String u_answer = user_answer;
-
-                //prob_num_list.add(Integer.parseInt(prob_num));
+                String image = c.getString(IMAGE);
 
                 boolean b = false;
                 boolean b2 = false;
@@ -180,7 +180,7 @@ public class SolutionActivity extends AppCompatActivity{
 //                        choice2, choice3, choice4,answer, score, u_answer,solution,b,b2,b3,b4));
 
                 prob_data.add(new ProblemSet(arranged_num,prob_num, question,plural_question ,question_example, text, choice1,
-                        choice2, choice3, choice4,answer, score, u_answer,solution,b,b2,b3,b4,prob_set));
+                        choice2, choice3, choice4,answer, score, u_answer,solution,b,b2,b3,b4,prob_set,image));
             }
             ProblemAdapter adapter = new ProblemAdapter(prob_data);
 
@@ -220,14 +220,14 @@ public class SolutionActivity extends AppCompatActivity{
 
             @Override
             protected void onPostExecute(String result) { //doInBackground에서 return한 값을 받음.
-//                if(result != null){
-//                    myJson = result;
-//                    showList();
-//                } else{
-//                    Log.d("없다", "없다...");
-//                }
-                myJson = response_result;
-                showList();
+                if(response_result != null){
+                    myJson = response_result;
+                    showList();
+                } else{
+                    Log.d("없다", "없다...");
+                }
+//                myJson = response_result;
+//                showList();
             }
         }
         GetDataJSON g = new GetDataJSON();

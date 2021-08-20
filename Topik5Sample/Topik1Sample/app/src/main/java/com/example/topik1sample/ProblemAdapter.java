@@ -221,7 +221,7 @@ public class ProblemAdapter extends BaseAdapter{
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
-        StorageReference pathReference = storageReference.child("topik1");
+        StorageReference pathReference = storageReference.child("topik").child("topik1").child("이미지");
 
         //1. 지문
         if(problemSet.getText().equals("image")){
@@ -233,7 +233,7 @@ public class ProblemAdapter extends BaseAdapter{
                 Log.d("사진없음", "사진이 없습니다.");
             } else {
                 Log.d("이미지 이름", str_image);
-                StorageReference submitProfile_image = storageReference.child("topik1/" + str_image + ".PNG");
+                StorageReference submitProfile_image = storageReference.child("topik/topik1/이미지/" + str_image + ".PNG");
                 submitProfile_image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
                     @Override
                     public void onSuccess(Uri uri) {
@@ -339,7 +339,7 @@ public class ProblemAdapter extends BaseAdapter{
             if(pathReference == null) {
                 Log.d("사진없음", "사진이 없습니다.");
             } else{
-                StorageReference submitProfile = storageReference.child("topik1/" + array[0] + ".PNG");
+                StorageReference submitProfile = storageReference.child("topik/topik1/이미지/" + array[0] + ".PNG");
                 submitProfile.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
                     @Override
                     public void onSuccess(Uri uri) {
@@ -351,8 +351,9 @@ public class ProblemAdapter extends BaseAdapter{
 
                     }
                 });
+                Log.d("사진1", array[0]);
 
-                StorageReference submitProfile2 = storageReference.child("topik1/" + array[1] + ".PNG");
+                StorageReference submitProfile2 = storageReference.child("topik/topik1/이미지/" + array[1] + ".PNG");
                 submitProfile2.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
                     @Override
                     public void onSuccess(Uri uri) {
@@ -365,7 +366,7 @@ public class ProblemAdapter extends BaseAdapter{
                     }
                 });
 
-                StorageReference submitProfile3 = storageReference.child("topik1/" + array[2] + ".PNG");
+                StorageReference submitProfile3 = storageReference.child("topik/topik1/이미지/" + array[2] + ".PNG");
                 submitProfile3.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
                     @Override
                     public void onSuccess(Uri uri) {
@@ -378,7 +379,7 @@ public class ProblemAdapter extends BaseAdapter{
                     }
                 });
 
-                StorageReference submitProfile4 = storageReference.child("topik1/" + array[3] + ".PNG");
+                StorageReference submitProfile4 = storageReference.child("topik/topik1/이미지/" + array[3] + ".PNG");
                 submitProfile4.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
                     @Override
                     public void onSuccess(Uri uri) {
@@ -546,7 +547,7 @@ public class ProblemAdapter extends BaseAdapter{
 
         //데이터 설정
         holder.number.setText(problemSet.getProb_num());
-        holder.arranged_num.setText(problemSet.getArranged_num()                                         );
+        holder.arranged_num.setText(problemSet.getArranged_num());
         holder.common_question.setText(problemSet.getQuestion());
         holder.probSet.setText(problemSet.getProb_set());
         if(holder.common_question.getText().equals("")){

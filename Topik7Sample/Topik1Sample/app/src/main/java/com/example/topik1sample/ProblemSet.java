@@ -17,6 +17,7 @@ public class ProblemSet {
     private String answer;
     private String score;
     private String user_answer;
+    private String image;
 
     //라디오버튼
     boolean checked1;
@@ -31,9 +32,8 @@ public class ProblemSet {
     }
 
     public ProblemSet(String arranged_num, String prob_num, String question, String plural_question, String question_example, String text, String choice1,
-    //public ProblemSet(String prob_num, String question, String plural_question, String question_example, String text, String choice1,
                       String choice2, String choice3, String choice4, String answer, String score, String user_answer, String explanation,
-                      Boolean checked1, Boolean checked2, Boolean checked3, Boolean checked4, String prob_set) {
+                      Boolean checked1, Boolean checked2, Boolean checked3, Boolean checked4, String prob_set, String image) {
 
         this.arranged_num = arranged_num;
         this.prob_num = prob_num;
@@ -56,6 +56,7 @@ public class ProblemSet {
         this.checked4 = checked4;
 
         this.prob_set = prob_set;
+        this.image = image;
 
     }
 
@@ -213,5 +214,14 @@ public class ProblemSet {
     public void setAnswer(String answer) {
         this.answer = answer;
     }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.answer = image;
+    }
+
 
 }
