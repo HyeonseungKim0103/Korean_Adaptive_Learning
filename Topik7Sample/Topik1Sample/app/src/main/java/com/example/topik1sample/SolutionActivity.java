@@ -56,6 +56,7 @@ public class SolutionActivity extends AppCompatActivity{
     public static final String USER_ANSWER = "user_answer";
     public static final String REAL_ANSWER = "real_answer";
     public static final String IMAGE = "image";
+    public static final String MP3 = "mp3";
 
     TextView exampleText;
     TextView problemTextView;
@@ -154,6 +155,7 @@ public class SolutionActivity extends AppCompatActivity{
                 String solution = c.getString(SOLUTION);
                 String u_answer = user_answer;
                 String image = c.getString(IMAGE);
+                String mp3 = c.getString(MP3);
 
                 boolean b = false;
                 boolean b2 = false;
@@ -180,7 +182,7 @@ public class SolutionActivity extends AppCompatActivity{
 //                        choice2, choice3, choice4,answer, score, u_answer,solution,b,b2,b3,b4));
 
                 prob_data.add(new ProblemSet(arranged_num,prob_num, question,plural_question ,question_example, text, choice1,
-                        choice2, choice3, choice4,answer, score, u_answer,solution,b,b2,b3,b4,prob_set,image));
+                        choice2, choice3, choice4,answer, score, u_answer,solution,b,b2,b3,b4,prob_set,image,mp3));
             }
             ProblemAdapter adapter = new ProblemAdapter(prob_data);
 

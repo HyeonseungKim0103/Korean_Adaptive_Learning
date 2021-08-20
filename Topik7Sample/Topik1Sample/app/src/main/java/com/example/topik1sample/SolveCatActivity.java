@@ -71,6 +71,7 @@ public class SolveCatActivity extends AppCompatActivity{
     public static final String SOLUTION = "explanation";
     public static final String SECTION = "section";
     public static final String IMAGE = "image";
+    public static final String MP3 = "mp3";
 
     private UserAdapter uAdapter = null;
     public static ProblemAdapter pAdapter = null;
@@ -221,6 +222,7 @@ public class SolveCatActivity extends AppCompatActivity{
                     String score = c.getString(SCORE);
                     String solution = c.getString(SOLUTION);
                     String image = c.getString(IMAGE);
+                    String mp3 = c.getString(MP3);
 
                     boolean b = false;
                     boolean b2 = false;
@@ -249,7 +251,7 @@ public class SolveCatActivity extends AppCompatActivity{
 //                        choice2, choice3, choice4));
 
                     prob_data.add(new ProblemSet(String.valueOf(i + 1), prob_num, question, plural_question, question_example, text, choice1,
-                            choice2, choice3, choice4, answer, score, null, solution, b, b2, b3, b4, prob_set,image));
+                            choice2, choice3, choice4, answer, score, null, solution, b, b2, b3, b4, prob_set,image,mp3));
                 }
 
 

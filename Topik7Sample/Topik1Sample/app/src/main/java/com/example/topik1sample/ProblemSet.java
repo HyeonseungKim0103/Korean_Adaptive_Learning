@@ -18,6 +18,8 @@ public class ProblemSet {
     private String score;
     private String user_answer;
     private String image;
+    //듣기 파일
+    private String mp3;
 
     //라디오버튼
     boolean checked1;
@@ -28,12 +30,13 @@ public class ProblemSet {
     //category 선택할 때 필요함
     private String prob_set;
 
+
     public ProblemSet() {
     }
 
     public ProblemSet(String arranged_num, String prob_num, String question, String plural_question, String question_example, String text, String choice1,
                       String choice2, String choice3, String choice4, String answer, String score, String user_answer, String explanation,
-                      Boolean checked1, Boolean checked2, Boolean checked3, Boolean checked4, String prob_set, String image) {
+                      Boolean checked1, Boolean checked2, Boolean checked3, Boolean checked4, String prob_set, String image, String mp3) {
 
         this.arranged_num = arranged_num;
         this.prob_num = prob_num;
@@ -57,7 +60,16 @@ public class ProblemSet {
 
         this.prob_set = prob_set;
         this.image = image;
+        this.mp3 = mp3;
 
+    }
+
+    public String getMp3() {
+        return mp3;
+    }
+
+    public void setMp3(String mp3) {
+        this.mp3 = mp3;
     }
 
     public String getProb_set() {

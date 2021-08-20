@@ -1,6 +1,7 @@
 package com.example.topik1sample;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +39,12 @@ import static java.lang.Boolean.TRUE;
 public class ProblemAdapter extends BaseAdapter{
     private final List<ProblemSet> mData;
     private UserAdapter uAdapter= new UserAdapter();
+
+    //듣기 파일
+    int pos; // 재생 멈춘 시점
+    boolean isPlaying = false; // 재생중인지 확인할 변수
+    public boolean flag_restart =false; // 재시작을 눌렀는지 확인
+    public boolean flag_mp_gone =false; // mp가 존재하는지 확인
 
     public ProblemAdapter(List<ProblemSet> mData) {
         this.mData = mData;
@@ -118,6 +127,15 @@ public class ProblemAdapter extends BaseAdapter{
 
         ImageView textImage;
 
+        //듣기 파일
+        ImageButton bPlay;
+        ImageButton bPause;
+        ImageButton bRestart;
+        ImageButton bStop;
+
+        SeekBar sb; // 음악 재생위치를 나타내는 시크바
+        MediaPlayer mp; // 음악 재생을 위한 객체
+
     }
 
     @Override
@@ -165,8 +183,13 @@ public class ProblemAdapter extends BaseAdapter{
             ImageView choiceImage4 = convertView.findViewById(R.id.choiceImage4);
             ImageView textImage = convertView.findViewById(R.id.textImage);
 
-
             TextView probSet = convertView.findViewById(R.id.probSet);
+
+            ImageButton bPlay = convertView.findViewById(R.id.play_button);
+            ImageButton bPause = convertView.findViewById(R.id.pause_button);
+            ImageButton bRestart= convertView.findViewById(R.id.restart_button);
+            ImageButton bStop = convertView.findViewById(R.id.stop_button);
+            SeekBar sb = convertView.findViewById(R.id.seekBar);
 
             holder.arranged_num = arranged_num;
             holder.number = number;
@@ -206,6 +229,13 @@ public class ProblemAdapter extends BaseAdapter{
             holder.choiceImage4 = choiceImage4;
 
             holder.textImage = textImage;
+
+            //듣기 파일
+            holder.bPlay = bPlay;
+            holder.bPause = bPause;
+            holder.bRestart = bRestart;
+            holder.bStop = bStop;
+            holder.sb = sb;
 
             convertView.setTag(holder);
         } else{ //재사용 할 때
@@ -391,9 +421,173 @@ public class ProblemAdapter extends BaseAdapter{
 
                     }
                 });
-
             }
+        }
 
+        //듣기 구현
+        class MyThread extends Thread {
+            @Override
+            public void run() { // 쓰레드가 시작되면 콜백되는 메서드
+                // 씨크바 막대기 조금씩 움직이기 (노래 끝날 때까지 반복)
+                while(isPlaying) {
+                    holder.sb.setProgress(holder.mp.getCurrentPosition());
+                }
+            }
+        }
+        if(problemSet.getMp3() ==null){
+            holder.sb.setVisibility(View.GONE);
+            holder.bPlay.setVisibility(View.GONE);
+            holder.bPause.setVisibility(View.GONE);
+            holder.bRestart.setVisibility(View.GONE);
+            holder.bStop.setVisibility(View.GONE);
+        } else {
+
+            holder.sb = convertView.findViewById(R.id.seekBar);
+            holder.sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    isPlaying = true;
+                    int ttt = seekBar.getProgress(); // 사용자가 움직여놓은 위치
+                    holder.mp.seekTo(ttt);
+                    holder.mp.start();
+                    Log.d("hi", "onStopTrackingTouch");
+
+                    new MyThread().start();
+                }
+
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    isPlaying = false;
+                    holder.mp.pause();
+                    Log.d("hi", "onStart");
+                }
+
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (seekBar.getMax() == progress) {
+                        holder.bPlay.setVisibility(View.VISIBLE);
+                        holder.bPause.setVisibility(View.GONE);
+                        holder.bRestart.setVisibility(View.GONE);
+                        isPlaying = false;
+                        Log.d("hi", "onProgressChanged");
+                        holder.mp.stop();
+                    }
+                }
+            });
+
+            holder.sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    isPlaying = true;
+                    int ttt = seekBar.getProgress(); // 사용자가 움직여놓은 위치
+                    holder.mp.seekTo(ttt);
+                    holder.mp.start();
+                    new MyThread().start();
+                }
+
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    isPlaying = false;
+                    holder.mp.pause();
+                }
+
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (seekBar.getMax() == progress) {
+                        holder.bPlay.setVisibility(View.VISIBLE);
+
+                        holder.bPause.setVisibility(View.GONE);
+                        holder.bRestart.setVisibility(View.GONE);
+                        isPlaying = false;
+                        holder.mp.stop();
+                    }
+                }
+            });
+
+            //MediaPlayer 객체 초기화 , 재생
+            holder.mp = MediaPlayer.create(
+                    convertView.getContext(), // 현재 화면의 제어권자
+                    R.raw.track1); // 음악파일 -##################### 임의로 넣은  TRACK 1
+
+            int a = holder.mp.getDuration(); // 노래의 재생시간(miliSecond)
+            holder.sb.setMax(a);// 씨크바의 최대 범위를 노래의 재생시간으로 설정
+            new MyThread().start(); // 씨크바 그려줄 쓰레드 시작
+            isPlaying = true; // 씨크바 쓰레드 반복 하도록
+
+            View finalConvertView = convertView;
+            holder.bPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (flag_restart == true || flag_mp_gone == true) {
+                        // MediaPlayer 객체 초기화 , 재생
+                        holder.mp = MediaPlayer.create(
+                                finalConvertView.getContext(), // 현재 화면의 제어권자
+                                R.raw.track1); // 음악파일
+                        flag_restart = false;
+
+                        int a = holder.mp.getDuration(); // 노래의 재생시간(miliSecond)
+                        holder.sb.setMax(a);// 씨크바의 최대 범위를 노래의 재생시간으로 설정
+                        new MyThread().start(); // 씨크바 그려줄 쓰레드 시작
+                        isPlaying = true; // 씨크바 쓰레드 반복 하도록
+                    }
+
+                    holder.mp.setLooping(false); // true:무한반복
+                    holder.mp.start(); // 노래 재생 시작
+
+                    holder.bPlay.setVisibility(View.GONE);
+                    holder.bPause.setVisibility(View.VISIBLE);
+
+                }
+            });
+
+            holder.bPause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    flag_restart = false;
+                    // 일시중지
+                    pos = holder.mp.getCurrentPosition();
+                    holder.mp.pause(); // 일시중지
+                    isPlaying = false; // 쓰레드 정지
+                    holder.bPlay.setVisibility(View.VISIBLE);
+                    holder.bPause.setVisibility(View.GONE);
+                }
+            });
+            holder.bRestart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (flag_mp_gone == true) {
+                        // MediaPlayer 객체 초기화 , 재생
+                        holder.mp = MediaPlayer.create(
+                                finalConvertView.getContext(), // 현재 화면의 제어권자
+                                R.raw.track1); // 음악파일
+                        flag_restart = false;
+
+                        int a = holder.mp.getDuration(); // 노래의 재생시간(miliSecond)
+                        holder.sb.setMax(a);// 씨크바의 최대 범위를 노래의 재생시간으로 설정
+                        new MyThread().start(); // 씨크바 그려줄 쓰레드 시작
+                        isPlaying = true; // 씨크바 쓰레드 반복 하도록
+                    }
+                    // 멈춘 지점부터 재시작
+                    holder.mp.setLooping(false); // true:무한반복
+                    holder.mp.seekTo(0); // 맨처음으로 이동
+                    holder.mp.start(); // 시작
+                    isPlaying = true; // 재생하도록 flag 변경
+                    new MyThread().start(); // 쓰레드 시작
+
+                    holder.bPlay.setVisibility(View.GONE);
+                    holder.bPause.setVisibility(View.VISIBLE);
+                    flag_restart = true;
+                }
+            });
+
+            holder.bStop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 음악 종료
+                    if (flag_mp_gone != true) {
+                        isPlaying = false; // 쓰레드 종료
+                        holder.mp.stop(); // 멈춤
+                        holder.mp.release(); // 자원 해제
+
+                        holder.sb.setProgress(0); // 씨크바 초기화
+                        flag_mp_gone = true;
+                    }
+                }
+            });
         }
 
         holder.choice1Radio.setChecked(mData.get(position).checked1);
