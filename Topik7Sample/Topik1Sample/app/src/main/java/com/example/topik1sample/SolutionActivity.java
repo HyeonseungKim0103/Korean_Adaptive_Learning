@@ -115,6 +115,7 @@ public class SolutionActivity extends AppCompatActivity{
         RequestBody formbody = new FormBody.Builder().add("prob_num",prob_num).add("prob_round",prob_round).build();
 
         Request request = new Request.Builder().url("http://192.168.0.6:5000/topik1_solution/").post(formbody).build();
+
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {

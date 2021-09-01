@@ -1,61 +1,108 @@
 package com.example.topik1sample;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.GridView;
-import android.widget.ListAdapter;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.topik1sample.R;
+import com.example.topik1sample.SignInActivity;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 
 import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private GoogleApiClient mGoogleApiClient;
+    private FirebaseUser mFirebaseUser;
+    private FirebaseAuth mFirebaseAuth;
+    private String mUsername;
+    private String mPhotoUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (android.os.Build.VERSION.SDK_INT > 9)
-        {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+
+        //로그인
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API)
+                .build();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if (mFirebaseUser == null) {
+            startActivity(new Intent(this, SignInActivity.class));
+            finish();
+            return;
+        } else {
+            mUsername = mFirebaseUser.getDisplayName();
+            if (mFirebaseUser.getPhotoUrl() != null) {
+                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionFailed (@NonNull ConnectionResult connectionResult){
+        Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show();
+    }
+    //로그아웃
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu){
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected (@NonNull MenuItem item){
+        switch (item.getItemId()) {
+            case R.id.sign_out_menu:
+                mFirebaseAuth.signOut();
+                ;
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                mUsername = "";
+                startActivity(new Intent(this, SignInActivity.class));
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
     public void go_choice_lev(View view) {
-        Intent intent = new Intent(getApplicationContext(), ChoiceMoOrCatActivity.class);
+        Intent intent = new Intent(this,ChoiceMoOrCatActivity.class);
         startActivity(intent);
     }
+
 }

@@ -135,6 +135,7 @@ public class ScoringActivity extends AppCompatActivity{
                     .add("result", p4).build();
 
             Request request = new Request.Builder().url("http://192.168.0.6:5000/insert_prob/").post(formbody).build();
+
             okHttpClient.newCall(request).enqueue(new Callback(){
                 @Override
                 public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {

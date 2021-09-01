@@ -127,6 +127,7 @@ public class SolveCatActivity extends AppCompatActivity{
         RequestBody formbody = new FormBody.Builder().add("selected_problem_cat",selected_prob_cat).add("selected_cat",selected_cat).build();
         String request_url = "topik1_exam_cat/";
         String url = "http://192.168.0.6:5000/";
+
         Log.d("choice_cat_num",choice_cat_num);
         Log.d("cat1",selected_cat);
 
@@ -151,8 +152,7 @@ public class SolveCatActivity extends AppCompatActivity{
         //요청
         OkHttpClient okHttpClient = new OkHttpClient();
 
-//        Request request = new Request.Builder().url("http:192.168.0.6:5000/topik1_exam_cat").post(formbody).build();
-        Request request = new Request.Builder().url(finalUrl).post(formbody).build();
+        Request request = new Request.Builder().url("http://192.168.0.6:5000/topik1_exam_cat/").post(formbody).build();
         okHttpClient.newCall(request).enqueue(new Callback(){
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {

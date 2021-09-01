@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.List;
 
 import static android.view.View.GONE;
@@ -41,10 +42,9 @@ public class ProblemAdapter extends BaseAdapter{
     private UserAdapter uAdapter= new UserAdapter();
 
     //듣기 파일
-    int pos; // 재생 멈춘 시점
-    boolean isPlaying = false; // 재생중인지 확인할 변수
-    public boolean flag_restart =false; // 재시작을 눌렀는지 확인
-    public boolean flag_mp_gone =false; // mp가 존재하는지 확인
+    public static String url;
+    MediaPlayer player;
+    int position = 0; // 다시 시작 기능을 위한 현재 재생 위치 확인 변수
 
     public ProblemAdapter(List<ProblemSet> mData) {
         this.mData = mData;
@@ -185,10 +185,10 @@ public class ProblemAdapter extends BaseAdapter{
 
             TextView probSet = convertView.findViewById(R.id.probSet);
 
-            ImageButton bPlay = convertView.findViewById(R.id.play_button);
-            ImageButton bPause = convertView.findViewById(R.id.pause_button);
-            ImageButton bRestart= convertView.findViewById(R.id.restart_button);
-            ImageButton bStop = convertView.findViewById(R.id.stop_button);
+            ImageButton bPlay = convertView.findViewById(R.id.play);
+            ImageButton bPause = convertView.findViewById(R.id.pause);
+            ImageButton bRestart= convertView.findViewById(R.id.restart);
+            ImageButton bStop = convertView.findViewById(R.id.stop);
             SeekBar sb = convertView.findViewById(R.id.seekBar);
 
             holder.arranged_num = arranged_num;
@@ -244,6 +244,14 @@ public class ProblemAdapter extends BaseAdapter{
         ProblemSet problemSet = mData.get(position);
 //        Log.d("지문",problemSet.getText());
 
+        //듣기
+        holder.bPlay.setVisibility(GONE);
+        holder.bPause.setVisibility(GONE);
+        holder.bRestart.setVisibility(GONE);
+        holder.bStop.setVisibility(GONE);
+        holder.sb.setVisibility(GONE);
+
+
         //이미지 처리
         holder.textImage.setVisibility(GONE);
         holder.textTextView.setVisibility(VISIBLE);
@@ -252,6 +260,7 @@ public class ProblemAdapter extends BaseAdapter{
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
         StorageReference pathReference = storageReference.child("topik").child("topik1").child("이미지");
+        StorageReference pathReference2 = storageReference.child("topik").child("topik1").child("듣기");
 
         //1. 지문
         if(problemSet.getText().equals("image")){
@@ -281,55 +290,6 @@ public class ProblemAdapter extends BaseAdapter{
         if(problemSet.getText().equals("")){
             holder.textTextView.setVisibility(GONE);
         }
-//        else if(problemSet.getText().equals("image")){
-//            holder.textTextView.setVisibility(View.GONE);
-//            holder.textImage.setVisibility(VISIBLE);
-//            String str_image = problemSet.getImage();
-//
-//            if (pathReference == null) {
-//                Log.d("사진없음", "사진이 없습니다.");
-//            } else {
-//                StorageReference submitProfile_image = storageReference.child("topik1/" + str_image + ".PNG");
-//                submitProfile_image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//                        Glide.with(parent.getContext()).load(uri).into(holder.textImage);
-//                    }
-//                }).addOnFailureListener(new OnFailureListener(){
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//
-//                    }
-//                });
-//            }
-//
-//        }
-
-
-//        if(!problemSet.getText().equals("image") && !holder.textTextView.getText().equals("")){
-//            holder.textTextView.setVisibility(VISIBLE);
-//            holder.textTextView.setText(problemSet.getText());
-//        } else if(problemSet.getText().equals("image")) {
-//            holder.textTextView.setVisibility(View.GONE);
-//            String str_image = problemSet.getImage();
-//
-//            if (pathReference == null) {
-//                Log.d("사진없음", "사진이 없습니다.");
-//            } else {
-//                StorageReference submitProfile_image = storageReference.child("topik1/" + str_image + ".PNG");
-//                submitProfile_image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//                        Glide.with(parent.getContext()).load(uri).into(holder.textImage);
-//                    }
-//                }).addOnFailureListener(new OnFailureListener(){
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//
-//                    }
-//                });
-//            }
-//        }
 
         //2. 선지
         holder.imageCard1.setVisibility(GONE);
@@ -422,172 +382,34 @@ public class ProblemAdapter extends BaseAdapter{
                     }
                 });
             }
+
         }
 
-        //듣기 구현
-        class MyThread extends Thread {
-            @Override
-            public void run() { // 쓰레드가 시작되면 콜백되는 메서드
-                // 씨크바 막대기 조금씩 움직이기 (노래 끝날 때까지 반복)
-                while(isPlaying) {
-                    holder.sb.setProgress(holder.mp.getCurrentPosition());
-                }
+        if(!problemSet.getMp3().equals("NA")){
+            holder.bPlay.setVisibility(VISIBLE);
+            holder.bPause.setVisibility(VISIBLE);
+            holder.bRestart.setVisibility(VISIBLE);
+            holder.bStop.setVisibility(VISIBLE);
+            holder.sb.setVisibility(VISIBLE);
+            if(pathReference2 == null) {
+                Log.d("듣기 파일없음", "듣기 파일이 없습니다.");
+            } else{
+                Log.d("듣기 파일", problemSet.getMp3());
+                StorageReference submitProfile5 = storageReference.child("topik/topik1/듣기/" + problemSet.getMp3() + ".mp3");
+                submitProfile5.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>(){
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        url = uri.toString();
+                    }
+                }).addOnFailureListener(new OnFailureListener(){
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
             }
-        }
-        if(problemSet.getMp3() ==null){
-            holder.sb.setVisibility(View.GONE);
-            holder.bPlay.setVisibility(View.GONE);
-            holder.bPause.setVisibility(View.GONE);
-            holder.bRestart.setVisibility(View.GONE);
-            holder.bStop.setVisibility(View.GONE);
-        } else {
 
-            holder.sb = convertView.findViewById(R.id.seekBar);
-            holder.sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    isPlaying = true;
-                    int ttt = seekBar.getProgress(); // 사용자가 움직여놓은 위치
-                    holder.mp.seekTo(ttt);
-                    holder.mp.start();
-                    Log.d("hi", "onStopTrackingTouch");
-
-                    new MyThread().start();
-                }
-
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                    isPlaying = false;
-                    holder.mp.pause();
-                    Log.d("hi", "onStart");
-                }
-
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if (seekBar.getMax() == progress) {
-                        holder.bPlay.setVisibility(View.VISIBLE);
-                        holder.bPause.setVisibility(View.GONE);
-                        holder.bRestart.setVisibility(View.GONE);
-                        isPlaying = false;
-                        Log.d("hi", "onProgressChanged");
-                        holder.mp.stop();
-                    }
-                }
-            });
-
-            holder.sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    isPlaying = true;
-                    int ttt = seekBar.getProgress(); // 사용자가 움직여놓은 위치
-                    holder.mp.seekTo(ttt);
-                    holder.mp.start();
-                    new MyThread().start();
-                }
-
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                    isPlaying = false;
-                    holder.mp.pause();
-                }
-
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if (seekBar.getMax() == progress) {
-                        holder.bPlay.setVisibility(View.VISIBLE);
-
-                        holder.bPause.setVisibility(View.GONE);
-                        holder.bRestart.setVisibility(View.GONE);
-                        isPlaying = false;
-                        holder.mp.stop();
-                    }
-                }
-            });
-
-            //MediaPlayer 객체 초기화 , 재생
-            holder.mp = MediaPlayer.create(
-                    convertView.getContext(), // 현재 화면의 제어권자
-                    R.raw.track1); // 음악파일 -##################### 임의로 넣은  TRACK 1
-
-            int a = holder.mp.getDuration(); // 노래의 재생시간(miliSecond)
-            holder.sb.setMax(a);// 씨크바의 최대 범위를 노래의 재생시간으로 설정
-            new MyThread().start(); // 씨크바 그려줄 쓰레드 시작
-            isPlaying = true; // 씨크바 쓰레드 반복 하도록
-
-            View finalConvertView = convertView;
-            holder.bPlay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (flag_restart == true || flag_mp_gone == true) {
-                        // MediaPlayer 객체 초기화 , 재생
-                        holder.mp = MediaPlayer.create(
-                                finalConvertView.getContext(), // 현재 화면의 제어권자
-                                R.raw.track1); // 음악파일
-                        flag_restart = false;
-
-                        int a = holder.mp.getDuration(); // 노래의 재생시간(miliSecond)
-                        holder.sb.setMax(a);// 씨크바의 최대 범위를 노래의 재생시간으로 설정
-                        new MyThread().start(); // 씨크바 그려줄 쓰레드 시작
-                        isPlaying = true; // 씨크바 쓰레드 반복 하도록
-                    }
-
-                    holder.mp.setLooping(false); // true:무한반복
-                    holder.mp.start(); // 노래 재생 시작
-
-                    holder.bPlay.setVisibility(View.GONE);
-                    holder.bPause.setVisibility(View.VISIBLE);
-
-                }
-            });
-
-            holder.bPause.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    flag_restart = false;
-                    // 일시중지
-                    pos = holder.mp.getCurrentPosition();
-                    holder.mp.pause(); // 일시중지
-                    isPlaying = false; // 쓰레드 정지
-                    holder.bPlay.setVisibility(View.VISIBLE);
-                    holder.bPause.setVisibility(View.GONE);
-                }
-            });
-            holder.bRestart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (flag_mp_gone == true) {
-                        // MediaPlayer 객체 초기화 , 재생
-                        holder.mp = MediaPlayer.create(
-                                finalConvertView.getContext(), // 현재 화면의 제어권자
-                                R.raw.track1); // 음악파일
-                        flag_restart = false;
-
-                        int a = holder.mp.getDuration(); // 노래의 재생시간(miliSecond)
-                        holder.sb.setMax(a);// 씨크바의 최대 범위를 노래의 재생시간으로 설정
-                        new MyThread().start(); // 씨크바 그려줄 쓰레드 시작
-                        isPlaying = true; // 씨크바 쓰레드 반복 하도록
-                    }
-                    // 멈춘 지점부터 재시작
-                    holder.mp.setLooping(false); // true:무한반복
-                    holder.mp.seekTo(0); // 맨처음으로 이동
-                    holder.mp.start(); // 시작
-                    isPlaying = true; // 재생하도록 flag 변경
-                    new MyThread().start(); // 쓰레드 시작
-
-                    holder.bPlay.setVisibility(View.GONE);
-                    holder.bPause.setVisibility(View.VISIBLE);
-                    flag_restart = true;
-                }
-            });
-
-            holder.bStop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // 음악 종료
-                    if (flag_mp_gone != true) {
-                        isPlaying = false; // 쓰레드 종료
-                        holder.mp.stop(); // 멈춤
-                        holder.mp.release(); // 자원 해제
-
-                        holder.sb.setProgress(0); // 씨크바 초기화
-                        flag_mp_gone = true;
-                    }
-                }
-            });
         }
 
         holder.choice1Radio.setChecked(mData.get(position).checked1);
@@ -805,6 +627,35 @@ public class ProblemAdapter extends BaseAdapter{
                 holder.choice4Radio.setChecked(TRUE);
             }
         }
+        holder.bPlay.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                playAudio();
+            }
+        });
+
+        holder.bPause.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                pauseAudio();
+            }
+        });
+
+        holder.bRestart.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                resumeAudio();
+            }
+        });
+
+        holder.bStop.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                stopAudio();
+            }
+        });
+
+
         return convertView;
     }
 
@@ -812,4 +663,51 @@ public class ProblemAdapter extends BaseAdapter{
         final UserAdapter uAdapter = this.uAdapter;
         return uAdapter;
     }
+
+    private void playAudio() {
+        try {
+            closePlayer();
+            player = new MediaPlayer();
+            player.setDataSource(String.valueOf(url));
+            player.prepare();
+            player.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 현재 일시정지가 되었는지 중지가 되었는지 헷갈릴 수 있기 때문에 스위치 변수를 선언해 구분할 필요가 있다. (구현은 안했다.)
+    private void pauseAudio() {
+        if (player != null) {
+            position = player.getCurrentPosition();
+            player.pause();
+
+        }
+    }
+
+    private void resumeAudio() {
+        if (player != null && !player.isPlaying()) {
+            player.seekTo(position);
+            player.start();
+
+        }
+    }
+
+    private void stopAudio() {
+        if(player != null && player.isPlaying()){
+            player.stop();
+
+        }
+    }
+
+    /* 녹음 시 마이크 리소스 제한. 누군가가 lock 걸어놓으면 다른 앱에서 사용할 수 없음.
+     * 따라서 꼭 리소스를 해제해주어야함. */
+    public void closePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
 }

@@ -20,6 +20,7 @@
                 android:id="@+id/seekBar"
                 android:layout_width="287dp"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.345"
@@ -28,9 +29,10 @@
                 app:layout_constraintVertical_bias="0.431" />
 
             <ImageButton
-                android:id="@+id/play_button"
+                android:id="@+id/play"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:visibility="gone"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/play"
@@ -41,7 +43,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.427" />
             <ImageButton
-                android:id="@+id/pause_button"
+                android:id="@+id/pause"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:adjustViewBounds="true"
@@ -57,9 +59,10 @@
                 app:layout_constraintVertical_bias="0.426" />
 
             <ImageButton
-                android:id="@+id/restart_button"
+                android:id="@+id/restart"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:visibility="gone"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/restart"
@@ -70,9 +73,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.427" />
             <ImageButton
-                android:id="@+id/stop_button"
+                android:id="@+id/stop"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:visibility="gone"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/stop"
