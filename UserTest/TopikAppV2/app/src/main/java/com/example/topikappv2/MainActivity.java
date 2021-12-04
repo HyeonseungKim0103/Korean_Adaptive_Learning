@@ -1,46 +1,25 @@
 package com.example.topikappv2;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import android.content.Context;
+
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.topikappv2.R;
-import com.example.topikappv2.SignInActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
-
-import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
@@ -49,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private String mUsername;
     private String mPhotoUrl;
     private String mUserID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if(mFirebaseUser != null){
-             mUserID = mFirebaseUser.getEmail();
+            mUserID = mFirebaseUser.getEmail();
         }
 
         //로그인 다시 하려면 이거 꼭 풀 것.
@@ -78,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         }
     }
+
+
 
     @Override
     public void onConnectionFailed (@NonNull ConnectionResult connectionResult){
@@ -96,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                mUsername = "";
                 startActivity(new Intent(this, SignInActivity.class));
                 finish();
                 return true;
@@ -105,19 +86,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    public void go_choice_lev(View view) {
-        Intent intent = new Intent(this,ChoiceMoOrCatActivity.class);
+    public void go_solve_re(View view) {
+        Intent intent = new Intent(this, ChoiceReActivity.class);
+        intent.putExtra("UserID", mUserID);
         startActivity(intent);
     }
 
     public void select_mo(View view) {
         Intent intent = new Intent(this, ChoiceMoActivity.class);
+        intent.putExtra("UserID", mUserID);
         startActivity(intent);
+
     }
 
     public void select_cat(View view) {
+
         Intent intent = new Intent(this, ChoiceCatActivity.class);
         startActivity(intent);
+
     }
 
     //로그아웃
@@ -125,9 +111,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void log_out(View view){
         mFirebaseAuth.signOut();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-        mUsername = "";
         startActivity(new Intent(this, SignInActivity.class));
         finish();
     }
-
 }

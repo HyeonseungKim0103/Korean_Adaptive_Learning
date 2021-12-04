@@ -108,10 +108,6 @@ public class ScoringActivity extends AppCompatActivity{
     private FirebaseAuth mFirebaseAuth;
     private String mUserID;
 
-    //닉네임
-
-    private String nickname;
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -128,7 +124,6 @@ public class ScoringActivity extends AppCompatActivity{
         Intent intent = getIntent();
         section = intent.getStringExtra("section");
         selected_lev = intent.getStringExtra("topik_level");
-        nickname = intent.getStringExtra("nickname");
         user_list = (ArrayList<UserSet>) intent.getSerializableExtra("user_list");
         uAdapter.setList(user_list);
 
@@ -169,7 +164,7 @@ public class ScoringActivity extends AppCompatActivity{
             p4 = items.getTime_Stamp();
             p5 = items.getChange();
 
-            RequestBody formbody = new FormBody.Builder().add("user_ID", nickname).add("problem_ID",p_id).add("user_answer", p1).add("real_answer", p2)
+            RequestBody formbody = new FormBody.Builder().add("user_ID", mUserID).add("problem_ID",p_id).add("user_answer", p1).add("real_answer", p2)
                     .add("result", p3).add("time_stamp", String.valueOf(p4)).add("change_counts", String.valueOf(p5)).build();
 
             Request request = new Request.Builder().url("http://210.114.1.17/insert_prob/").post(formbody).build();

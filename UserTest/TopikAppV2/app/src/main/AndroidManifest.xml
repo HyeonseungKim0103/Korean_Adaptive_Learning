@@ -24,6 +24,12 @@
         <activity android:name=".SolveMoActivity"
             android:configChanges="orientation|screenSize">
         </activity>
+        <activity android:name=".SolveReActivity"
+            android:configChanges="orientation|screenSize">
+        </activity>
+        <activity android:name=".ChoiceReActivity"
+            android:configChanges="orientation|screenSize">
+        </activity>
         <activity android:name=".ChoiceMoActivity"
             android:configChanges="orientation|screenSize">
         </activity>

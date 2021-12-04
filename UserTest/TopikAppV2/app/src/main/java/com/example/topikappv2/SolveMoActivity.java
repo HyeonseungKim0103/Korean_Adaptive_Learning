@@ -122,10 +122,6 @@ public class SolveMoActivity extends AppCompatActivity{
 
     private ArrayList<Integer> prob_num_list;
 
-    //닉네임
-    public static final String Nickname = "nickname";
-    String nickname;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -327,73 +323,53 @@ public class SolveMoActivity extends AppCompatActivity{
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void scoring_mo(View view) {
 
-        if(nickname == null) {
-            final LinearLayout linear = (LinearLayout) View.inflate(SolveMoActivity.this, R.layout.nickname_input, null);
-            new AlertDialog.Builder(SolveMoActivity.this)
-                    .setView(linear)
-                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            EditText nickname_editText = (EditText) linear.findViewById(R.id.nickname_input);
-                            nickname = nickname_editText.getText().toString();
-                            dialog.dismiss();
-                        }
-                    })
-                    .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
-        }
-
-        else {
-            if (!pAdapter.isEmpty()) {
-                uAdapter = pAdapter.return_uAdapter();
-                userList = (ArrayList<UserSet>) uAdapter.returnList();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    userList.sort(Comparator.naturalOrder());
-                }
-
-                tAdapter = pAdapter.return_tAdapter();
-                timeList = (ArrayList<Time>) tAdapter.returnList();
-                Map<Integer, Integer> time_map = timeList.stream()
-                        .collect(Collectors.toMap(
-                                Time::getArranged_Num,
-                                Time::getTime,
-                                Integer::sum));
-
-                List<Integer> keyList = new ArrayList<>(time_map.keySet());
-                keyList.sort(Integer::compareTo);
-                int i = 0;
-                for (Integer key : keyList) {
-                    System.out.println(key + "번은" + time_map.get(key));
-                    userList.get(i).setTime_stamp(time_map.get(key));
-                    i += 1;
-                }
-
-                //바꾼 횟수
-                Map<Integer, Integer> change_map = timeList.stream()
-                        .collect(Collectors.toMap(
-                                Time::getArranged_Num,
-                                Time::getChange,
-                                Integer::sum));
-
-                int j = 0;
-                for (Integer key : keyList) {
-                    System.out.println(key + "번은" + change_map.get(key));
-                    userList.get(j).setChange(change_map.get(key));
-                    j += 1;
-                }
-
-
-                Intent intent = new Intent(this, ScoringActivity.class);
-                intent.putExtra(USER_LIST, (Serializable) userList);
-                //intent.putExtra(PROB_ROUND, selected_round);
-                intent.putExtra(Nickname, nickname);
-                intent.putExtra(TOPIK_LEVEL, selected_level);
-                startActivity(intent);
+        if (!pAdapter.isEmpty()) {
+            uAdapter = pAdapter.return_uAdapter();
+            userList = (ArrayList<UserSet>) uAdapter.returnList();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                userList.sort(Comparator.naturalOrder());
             }
+
+            tAdapter = pAdapter.return_tAdapter();
+            timeList = (ArrayList<Time>) tAdapter.returnList();
+            Map<Integer, Integer> time_map = timeList.stream()
+                    .collect(Collectors.toMap(
+                            Time::getArranged_Num,
+                            Time::getTime,
+                            Integer::sum));
+
+            List<Integer> keyList = new ArrayList<>(time_map.keySet());
+            keyList.sort(Integer::compareTo);
+            int i = 0;
+            for (Integer key : keyList) {
+                System.out.println(key + "번은" + time_map.get(key));
+                userList.get(i).setTime_stamp(time_map.get(key));
+                i += 1;
+            }
+
+            //바꾼 횟수
+            Map<Integer, Integer> change_map = timeList.stream()
+                    .collect(Collectors.toMap(
+                            Time::getArranged_Num,
+                            Time::getChange,
+                            Integer::sum));
+
+            int j = 0;
+            for (Integer key : keyList) {
+                System.out.println(key + "번은" + change_map.get(key));
+                userList.get(j).setChange(change_map.get(key));
+                j += 1;
+            }
+
+
+            Intent intent = new Intent(this, ScoringActivity.class);
+            intent.putExtra(USER_LIST, (Serializable) userList);
+            //intent.putExtra(PROB_ROUND, selected_round);
+
+            intent.putExtra(TOPIK_LEVEL, selected_level);
+            startActivity(intent);
         }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -417,8 +393,6 @@ public class SolveMoActivity extends AppCompatActivity{
 //        }
         Intent intent = new Intent(SolveMoActivity.this,TimeActivity.class);
         intent.putExtra(TIME_LIST, (Serializable) timeList);
-        Log.d("닉네임",nickname);
         startActivity(intent);
-
     }
 }
